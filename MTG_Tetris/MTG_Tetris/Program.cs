@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 
+using DoubleBuffer;
+
 /// <summary>
 /// 어떤 블럭을 만들것이냐?
 /// 어떤 블럭은 어떤 데이터로 들고 있을것이냐
@@ -119,6 +121,8 @@ namespace MTG_Tetris
         public int[,] StageArray = new int[STAGEHEIGHT, STAGEWIDTH];
 
 
+        public buffer MyBuffer;
+
         public BlockTypeData[] AllBlockTypeDataArray = new BlockTypeData[2]
         {
             new BlockTypeData()
@@ -153,13 +157,15 @@ namespace MTG_Tetris
                 {
                     if (StageArray[y, x] == (int)E_BLOCKTYPE.None)
                     {
-                        Console.SetCursorPosition(x * 2, y);
-                        Console.Write("·");
+                        //Console.SetCursorPosition(x * 2, y);
+                        //Console.Write("·");
+                        MyBuffer.Draw(".", x * 2, y);
                     }
                     else if ((int)E_BLOCKTYPE.BLOCK == StageArray[y, x])
                     {
-                        Console.SetCursorPosition(x * 2, y);
-                        Console.Write("■");
+                        //Console.SetCursorPosition(x * 2, y);
+                        //Console.Write("■");
+                        MyBuffer.Draw("A", x * 2, y);
                     }
                 }
             }
@@ -190,9 +196,12 @@ namespace MTG_Tetris
                     //if( 1== blockdata[y, x]  )
                     if( 1 == blocktypedata.GetBlockRotData(m_RotType, x, y) )
                     {
-                        Console.SetCursorPosition( (x + tempx) * 2
-                            , y + tempy);
-                        Console.Write("■");
+                        //Console.SetCursorPosition( (x + tempx) * 2
+                        //    , y + tempy);
+                        //Console.Write("■");
+
+                        MyBuffer.Draw("A", (x + tempx) * 2
+                            , y + tempy );
                     }
                     
                 }
@@ -204,7 +213,8 @@ namespace MTG_Tetris
             StageDraw();
             BlockDraw();
 
-
+            MyBuffer.Print();
+            MyBuffer.Clear();
         }
 
         void UpdateLogic()
@@ -292,6 +302,14 @@ namespace MTG_Tetris
         
         void InitData()
         {
+            int width = 80;
+            int height = 30;
+            System.Console.SetWindowSize(width, height);
+            System.Console.SetBufferSize(width, height);
+            MyBuffer = new buffer(width, height, width, height);
+
+
+
             //StageArray[3, 2] = (int)E_BLOCKTYPE.BLOCK;
 
             DelayTic = 200; // 0.5f

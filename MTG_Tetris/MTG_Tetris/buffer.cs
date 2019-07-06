@@ -29,7 +29,7 @@ namespace DoubleBuffer
     ///This class allows for a double buffer in Visual C# cmd promt. 
     ///The buffer is persistent between frames.
     ///</summary>
-    class buffer
+    public class buffer
     {
         private int width;
         private int height;
@@ -138,7 +138,8 @@ namespace DoubleBuffer
         /// <param name="Width"></param>
         /// <param name="Height"></param>
         /// <param name="attribute"></param>
-        public void Draw(String str, int Width, int Height, short attribute) //Draws the image to the buffer
+        public void Draw(String str, int Width, int Height
+            , short attribute = 15) //Draws the image to the buffer
         {
             if (Width > windowWidth - 1 || Height > windowHeight - 1)
             {
