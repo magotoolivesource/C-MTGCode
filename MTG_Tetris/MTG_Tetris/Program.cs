@@ -13,6 +13,10 @@ using System.Timers;
 ///     좌우이동
 ///     회전
 ///     
+/// 블럭 데이터 타입 수정
+///     임시 2개의 블럭 방식으로 처리
+///  
+///     
 /// 블럭이 채워지면 블럭이 사라진다.
 ///     한줄 블럭이 사라지면 그 블럭에 있는 상단 오브젝트들을 내려오게한다
 ///     여러 블럭일때 상단 오브젝트들을 한줄씩 내려오도록 한다
@@ -20,6 +24,26 @@ using System.Timers;
 /// </summary>
 namespace MTG_Tetris
 {
+
+    public class TestCls
+    {
+        public int TestVal1;
+        public string Name;
+        public int HP;
+
+        private int MP;
+
+        //public TestCls()
+        //{
+        //}
+        //public TestCls(int p_hp = 10 )
+        //{
+        //    HP = p_hp;
+        //}
+
+    }
+
+
 
     public class BlockTypeData
     {
@@ -31,6 +55,16 @@ namespace MTG_Tetris
         public BlockElementData[] AllBlockData = null;
 
         
+        public int[,] GetBlockRotData( int p_rottype )
+        {
+            return AllBlockData[p_rottype].BlockData;
+        }
+
+        public int GetBlockRotData(int p_rot, int p_x, int p_y)
+        {
+            return AllBlockData[p_rot].BlockData[p_y, p_x];
+        }
+
 
 
 
@@ -69,8 +103,6 @@ namespace MTG_Tetris
     public class Tertris
     {
 
-
-
         const int STAGEHEIGHT = 20;
         const int STAGEWIDTH = 10;
 
@@ -87,12 +119,30 @@ namespace MTG_Tetris
         public int[,] StageArray = new int[STAGEHEIGHT, STAGEWIDTH];
 
 
-        public BlockTypeData[] AllBlockTypeDataArray = new BlockTypeData[2];
+        public BlockTypeData[] AllBlockTypeDataArray = new BlockTypeData[2]
+        {
+            new BlockTypeData()
+            , new BlockTypeData()
+        };
 
 
         void StageDraw()
         {
-            
+            //int[] testarr = new int[10];
+
+            //TestCls[] testarray = new TestCls[2];
+            //testarray[0] = new TestCls();
+
+            //TestCls testval = new TestCls();
+            //testarray[1] = testval;
+
+            //TestCls testval = new TestCls() { HP = 20, Name = "test", TestVal1 = 10  };
+            //TestCls testval2 = new TestCls();
+
+
+
+
+
             int len = StageArray.Length;
             int widthsize = StageArray.GetLength(1);
             int heightsize = StageArray.GetLength(0);
@@ -115,20 +165,30 @@ namespace MTG_Tetris
             }
         }
 
+
+        int m_CurrentBlockType = 0;
+        int m_RotType = 0; // 0 이면
         int m_BlockPosY = 0;
         int m_BlockPosX = 0;
-        int m_RotType = 0; // 0 이면
+        
+        
         void BlockDraw()
         {
-            int widthsize = BlockArray.GetLength(2);
-            int heightsize = BlockArray.GetLength(1);
+            BlockTypeData blocktypedata = AllBlockTypeDataArray[m_CurrentBlockType];
+
+            int widthsize = 4;// BlockArray.GetLength(2);
+            int heightsize = 4; //BlockArray.GetLength(1);
             int tempy = m_BlockPosY;
             int tempx = m_BlockPosX;
+
+            int[,] blockdata = blocktypedata.GetBlockRotData(m_RotType);
+
             for (int y = 0; y < heightsize; y++)
             {
                 for (int x = 0; x < widthsize; x++)
                 {
-                    if( 1==  BlockArray[m_RotType, y, x]  )
+                    //if( 1== blockdata[y, x]  )
+                    if( 1 == blocktypedata.GetBlockRotData(m_RotType, x, y) )
                     {
                         Console.SetCursorPosition( (x + tempx) * 2
                             , y + tempy);
@@ -166,8 +226,12 @@ namespace MTG_Tetris
                 m_BlockPosY++;
                 if (m_BlockPosY >= 20)
                 {
+                    // 새로운 블럭 생성
                     m_BlockPosY = 0;
+                    m_CurrentBlockType = 1;
+                    m_RotType = 0;
                 }
+
             }
         }
 
@@ -233,13 +297,12 @@ namespace MTG_Tetris
             DelayTic = 200; // 0.5f
             NextTic = Environment.TickCount + DelayTic;
 
-
-            // 초기화 부분
-
             // 긴블럭에 대한 데이터 초기화
-            AllBlockTypeDataArray[0].AllBlockData = new BlockTypeData.BlockElementData[4]
+            AllBlockTypeDataArray[0].AllBlockData = new BlockTypeData.BlockElementData[]
             {
-                new BlockTypeData.BlockElementData{ BlockData = new int[4, 4]
+                new BlockTypeData.BlockElementData ()
+                {
+                    BlockData = new int[4, 4]
                     {
                         { 0, 0, 0, 0 }
                         , { 1, 1, 1, 1 }
@@ -247,31 +310,85 @@ namespace MTG_Tetris
                         , { 0, 0, 0, 0 }
                     }
                 }
-                , new BlockTypeData.BlockElementData{ BlockData = new int[4, 4]
+                , new BlockTypeData.BlockElementData()
+                {
+                    BlockData = new int[4, 4]
                     {
-                        { 0, 0, 0, 0 }
-                        , { 1, 1, 1, 1 }
+                          { 0, 0, 1, 0 }
+                        , { 0, 0, 1, 0 }
+                        , { 0, 0, 1, 0 }
+                        , { 0, 0, 1, 0 }
+                    }
+                }
+                , new BlockTypeData.BlockElementData()
+                {
+                    BlockData = new int[4, 4]
+                    {
+                          { 0, 0, 0, 0 }
                         , { 0, 0, 0, 0 }
+                        , { 1, 1, 1, 1 }
                         , { 0, 0, 0, 0 }
                     }
                 }
-                , new BlockTypeData.BlockElementData{ BlockData = new int[4, 4]
+                , new BlockTypeData.BlockElementData()
+                {
+                    BlockData = new int[4, 4]
                     {
-                        { 0, 0, 0, 0 }
-                        , { 1, 1, 1, 1 }
-                        , { 0, 0, 0, 0 }
-                        , { 0, 0, 0, 0 }
+                          { 0, 1, 0, 0 }
+                        , { 0, 1, 0, 0 }
+                        , { 0, 1, 0, 0 }
+                        , { 0, 1, 0, 0 }
                     }
                 }
-                , new BlockTypeData.BlockElementData{ BlockData = new int[4, 4]
-                    {
-                        { 0, 0, 0, 0 }
-                        , { 1, 1, 1, 1 }
-                        , { 0, 0, 0, 0 }
-                        , { 0, 0, 0, 0 }
-                    }
-                }
+
             };
+
+            AllBlockTypeDataArray[1].AllBlockData = new BlockTypeData.BlockElementData[4]
+            {
+                new BlockTypeData.BlockElementData ()
+                {
+                    BlockData = new int[4, 4]
+                    {
+                          { 0, 0, 0, 0 }
+                        , { 0, 1, 1, 0 }
+                        , { 0, 1, 1, 0 }
+                        , { 0, 0, 0, 0 }
+                    }
+                }
+                , new BlockTypeData.BlockElementData()
+                {
+                    BlockData = new int[4, 4]
+                    {
+                          { 0, 0, 0, 0 }
+                        , { 0, 1, 1, 0 }
+                        , { 0, 1, 1, 0 }
+                        , { 0, 0, 0, 0 }
+                    }
+                }
+                , new BlockTypeData.BlockElementData()
+                {
+                    BlockData = new int[4, 4]
+                    {
+                          { 0, 0, 0, 0 }
+                        , { 0, 1, 1, 0 }
+                        , { 0, 1, 1, 0 }
+                        , { 0, 0, 0, 0 }
+                    }
+                }
+                , new BlockTypeData.BlockElementData()
+                {
+                    BlockData = new int[4, 4]
+                    {
+                          { 0, 0, 0, 0 }
+                        , { 0, 1, 1, 0 }
+                        , { 0, 1, 1, 0 }
+                        , { 0, 0, 0, 0 }
+                    }
+                }
+
+           };
+
+
 
 
 
@@ -282,10 +399,9 @@ namespace MTG_Tetris
             //            , { 0, 0, 0, 0 }
             //            , { 0, 0, 0, 0 }
             //        };
-
-            AllBlockTypeDataArray[0].AllBlockData[1].BlockData = new int[4, 4];
-            AllBlockTypeDataArray[0].AllBlockData[2].BlockData = new int[4, 4];
-            AllBlockTypeDataArray[0].AllBlockData[3].BlockData = new int[4, 4];
+            //AllBlockTypeDataArray[0].AllBlockData[1].BlockData = new int[4, 4];
+            //AllBlockTypeDataArray[0].AllBlockData[2].BlockData = new int[4, 4];
+            //AllBlockTypeDataArray[0].AllBlockData[3].BlockData = new int[4, 4];
         }
 
 
