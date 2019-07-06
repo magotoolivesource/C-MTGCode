@@ -27,6 +27,32 @@ using DoubleBuffer;
 namespace MTG_Tetris
 {
 
+    public class MyRandom
+    {
+        private static Random m_Rand = new Random();
+
+        // 0보다 크거나 같고 System.Int32.MaxValue
+        public static int GetRand()
+        {
+            return m_Rand.Next();
+        }
+
+        public static int GetRandMax(int p_max)
+        {
+            return m_Rand.Next() % p_max;
+        }
+
+        public static int GetRand(int p_min, int p_max)
+        {
+            int gab = p_max - p_min;
+            int rand = m_Rand.Next() % gab;
+
+            return rand + p_min;
+        }
+
+    }
+
+
     public class TestCls
     {
         public int TestVal1;
@@ -67,46 +93,16 @@ namespace MTG_Tetris
             return AllBlockData[p_rot].BlockData[p_y, p_x];
         }
 
-
-
-
-        //public int[,,] BlockArray = new int[4, 4, 4];
-        //{
-        //    {
-        //        { 0, 0, 0, 0 }
-        //        , { 1, 1, 1, 1 }
-        //        , { 0, 0, 0, 0 }
-        //        , { 0, 0, 0, 0 }
-        //    }
-        //    , {
-        //          { 0, 0, 1, 0 }
-        //        , { 0, 0, 1, 0 }
-        //        , { 0, 0, 1, 0 }
-        //        , { 0, 0, 1, 0 }
-        //    }
-        //    , {
-        //          { 0, 0, 0, 0 }
-        //        , { 0, 0, 0, 0 }
-        //        , { 1, 1, 1, 1 }
-        //        , { 0, 0, 0, 0 }
-        //    }
-        //    , {
-        //          { 0, 1, 0, 0 }
-        //        , { 0, 1, 0, 0 }
-        //        , { 0, 1, 0, 0 }
-        //        , { 0, 1, 0, 0 }
-        //    }
-        //};
-
-
     }
 
 
     public class Tertris
     {
-
         const int STAGEHEIGHT = 20;
         const int STAGEWIDTH = 10;
+        const int BlockSize = 3;
+
+
 
         int DelayTic = 1000;
 
@@ -123,30 +119,16 @@ namespace MTG_Tetris
 
         public buffer MyBuffer;
 
-        public BlockTypeData[] AllBlockTypeDataArray = new BlockTypeData[2]
+        public BlockTypeData[] AllBlockTypeDataArray = new BlockTypeData[BlockSize]
         {
             new BlockTypeData()
+            , new BlockTypeData()
             , new BlockTypeData()
         };
 
 
         void StageDraw()
         {
-            //int[] testarr = new int[10];
-
-            //TestCls[] testarray = new TestCls[2];
-            //testarray[0] = new TestCls();
-
-            //TestCls testval = new TestCls();
-            //testarray[1] = testval;
-
-            //TestCls testval = new TestCls() { HP = 20, Name = "test", TestVal1 = 10  };
-            //TestCls testval2 = new TestCls();
-
-
-
-
-
             int len = StageArray.Length;
             int widthsize = StageArray.GetLength(1);
             int heightsize = StageArray.GetLength(0);
@@ -157,21 +139,17 @@ namespace MTG_Tetris
                 {
                     if (StageArray[y, x] == (int)E_BLOCKTYPE.None)
                     {
-                        //Console.SetCursorPosition(x * 2, y);
-                        //Console.Write("·");
                         MyBuffer.Draw(".", x * 2, y);
                     }
                     else if ((int)E_BLOCKTYPE.BLOCK == StageArray[y, x])
                     {
-                        //Console.SetCursorPosition(x * 2, y);
-                        //Console.Write("■");
                         MyBuffer.Draw("A", x * 2, y);
                     }
                 }
             }
         }
 
-
+        // 하나의 블럭에 대한 데이터값
         int m_CurrentBlockType = 0;
         int m_RotType = 0; // 0 이면
         int m_BlockPosY = 0;
@@ -193,12 +171,8 @@ namespace MTG_Tetris
             {
                 for (int x = 0; x < widthsize; x++)
                 {
-                    //if( 1== blockdata[y, x]  )
                     if( 1 == blocktypedata.GetBlockRotData(m_RotType, x, y) )
                     {
-                        //Console.SetCursorPosition( (x + tempx) * 2
-                        //    , y + tempy);
-                        //Console.Write("■");
 
                         MyBuffer.Draw("A", (x + tempx) * 2
                             , y + tempy );
@@ -234,15 +208,49 @@ namespace MTG_Tetris
             if (isflag)
             {
                 m_BlockPosY++;
-                if (m_BlockPosY >= 20)
+                if (m_BlockPosY >= 16)
                 {
-                    // 새로운 블럭 생성
-                    m_BlockPosY = 0;
-                    m_CurrentBlockType = 1;
-                    m_RotType = 0;
+                    CopyBlockData();
+                    CreateRandomBlock();
                 }
 
             }
+        }
+
+        void CopyBlockData()
+        {
+
+            BlockTypeData blocktypedata = AllBlockTypeDataArray[m_CurrentBlockType];
+
+            int widthsize = 4;// BlockArray.GetLength(2);
+            int heightsize = 4; //BlockArray.GetLength(1);
+            int tempy = m_BlockPosY;
+            int tempx = m_BlockPosX;
+
+            int[,] blockdata = blocktypedata.GetBlockRotData(m_RotType);
+
+            for (int y = 0; y < heightsize; y++)
+            {
+                for (int x = 0; x < widthsize; x++)
+                {
+                    if (1 == blocktypedata.GetBlockRotData(m_RotType, x, y))
+                    {
+                        //MyBuffer.Draw("A", (x + tempx) * 2
+                        //    , y + tempy);
+
+                        StageArray[y + tempy, (x + tempx)] = (int)E_BLOCKTYPE.BLOCK;
+                    }
+                }
+            }
+
+        }
+
+        void CreateRandomBlock()
+        {
+            // 새로운 블럭 생성
+            m_CurrentBlockType = MyRandom.GetRandMax(BlockSize);
+            m_BlockPosY = 0;
+            m_RotType = 0;
         }
 
         void UpdateInput()
@@ -280,12 +288,8 @@ namespace MTG_Tetris
                     m_RotType = (m_RotType + 1) % 4;
 
                 }
-
-
-
             }
             
-
         }
 
         public int GameLogic()
@@ -307,10 +311,6 @@ namespace MTG_Tetris
             System.Console.SetWindowSize(width, height);
             System.Console.SetBufferSize(width, height);
             MyBuffer = new buffer(width, height, width, height);
-
-
-
-            //StageArray[3, 2] = (int)E_BLOCKTYPE.BLOCK;
 
             DelayTic = 200; // 0.5f
             NextTic = Environment.TickCount + DelayTic;
@@ -361,6 +361,7 @@ namespace MTG_Tetris
 
             };
 
+            // 사각블럭 세팅
             AllBlockTypeDataArray[1].AllBlockData = new BlockTypeData.BlockElementData[4]
             {
                 new BlockTypeData.BlockElementData ()
@@ -406,20 +407,53 @@ namespace MTG_Tetris
 
            };
 
+            // H블럭 세팅
+            AllBlockTypeDataArray[2].AllBlockData = new BlockTypeData.BlockElementData[4]
+            {
+                new BlockTypeData.BlockElementData ()
+                {
+                    BlockData = new int[4, 4]
+                    {
+                          { 0, 1, 0, 0 }
+                        , { 0, 1, 1, 0 }
+                        , { 0, 0, 1, 0 }
+                        , { 0, 0, 0, 0 }
+                    }
+                }
+                , new BlockTypeData.BlockElementData()
+                {
+                    BlockData = new int[4, 4]
+                    {
+                          { 0, 1, 1, 0 }
+                        , { 1, 1, 0, 0 }
+                        , { 0, 0, 0, 0 }
+                        , { 0, 0, 0, 0 }
+                    }
+                }
+                , new BlockTypeData.BlockElementData()
+                {
+                    BlockData = new int[4, 4]
+                    {
+                          { 0, 1, 0, 0 }
+                        , { 0, 1, 1, 0 }
+                        , { 0, 0, 1, 0 }
+                        , { 0, 0, 0, 0 }
+                    }
+                }
+                , new BlockTypeData.BlockElementData()
+                {
+                    BlockData = new int[4, 4]
+                    {
+                          { 0, 1, 1, 0 }
+                        , { 1, 1, 0, 0 }
+                        , { 0, 0, 0, 0 }
+                        , { 0, 0, 0, 0 }
+                    }
+                }
+
+           };
 
 
-
-
-            //AllBlockTypeDataArray[0].AllBlockData[0].BlockData = new int[4, 4]
-            //        {
-            //            { 0, 0, 0, 0 }
-            //            , { 1, 1, 1, 1 }
-            //            , { 0, 0, 0, 0 }
-            //            , { 0, 0, 0, 0 }
-            //        };
-            //AllBlockTypeDataArray[0].AllBlockData[1].BlockData = new int[4, 4];
-            //AllBlockTypeDataArray[0].AllBlockData[2].BlockData = new int[4, 4];
-            //AllBlockTypeDataArray[0].AllBlockData[3].BlockData = new int[4, 4];
         }
 
 
