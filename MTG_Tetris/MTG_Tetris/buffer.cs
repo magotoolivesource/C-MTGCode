@@ -105,6 +105,9 @@ namespace DoubleBuffer
                 Right = r;
                 Bottom = b;
             }
+
+
+
         }
 
         /// <summary>

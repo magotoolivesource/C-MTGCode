@@ -100,6 +100,7 @@ namespace MTG_Tetris
     {
         const int STAGEHEIGHT = 20;
         const int STAGEWIDTH = 10;
+        const int BLOCKINITPOSX = (int)((STAGEWIDTH + 2) * 0.5f);
         const int BlockSize = 3;
 
 
@@ -112,12 +113,43 @@ namespace MTG_Tetris
         {
             None = 0,
             BLOCK,
+            WALL,
+
+            Max
         }
 
-        public int[,] StageArray = new int[STAGEHEIGHT, STAGEWIDTH];
+        // 스테이지
+        public int[,] StageArray = new int[STAGEHEIGHT + 1, STAGEWIDTH + 2]
+        {
+              {  2, 0, 0, 0, 0,       0, 0, 0, 0, 0   , 0, 2 }
+            , {  2, 0, 0, 0, 0,       0, 0, 0, 0, 0   , 0, 2 }
+            , {  2, 0, 0, 0, 0,       0, 0, 0, 0, 0   , 0, 2 }
+            , {  2, 0, 0, 0, 0,       0, 0, 0, 0, 0   , 0, 2 }
+            , {  2, 0, 0, 0, 0,       0, 0, 0, 0, 0   , 0, 2 }
+
+            , {  2, 0, 0, 0, 0,       0, 0, 0, 0, 0   , 0, 2 }
+            , {  2, 0, 0, 0, 0,       0, 0, 0, 0, 0   , 0, 2 }
+            , {  2, 0, 0, 0, 0,       0, 0, 0, 0, 0   , 0, 2 }
+            , {  2, 0, 0, 0, 0,       0, 0, 0, 0, 0   , 0, 2 }
+            , {  2, 0, 0, 0, 0,       0, 0, 0, 0, 0   , 0, 2 }
+
+            , {  2, 0, 0, 0, 0,       0, 0, 0, 0, 0   , 0, 2 }
+            , {  2, 0, 0, 0, 0,       0, 0, 0, 0, 0   , 0, 2 }
+            , {  2, 0, 0, 0, 0,       0, 0, 0, 0, 0   , 0, 2 }
+            , {  2, 0, 0, 0, 0,       0, 0, 0, 0, 0   , 0, 2 }
+            , {  2, 0, 0, 0, 0,       0, 0, 0, 0, 0   , 0, 2 }
+
+            , {  2, 0, 0, 0, 0,       0, 0, 1, 1, 0   , 0, 2 }
+            , {  2, 0, 0, 0, 0,       0, 0, 0, 1, 0   , 0, 2 }
+            , {  2, 0, 0, 0, 0,       0, 0, 0, 1, 0   , 0, 2 }
+            , {  2, 0, 0, 0, 0,       0, 0, 0, 1, 0   , 0, 2 }
+            , {  2, 0, 1, 1, 1,       1, 1, 1, 1, 0   , 0, 2 }
+
+            , {  2, 2, 2, 2, 2,       2, 2, 2, 2, 2   , 2, 2 }
+        };
 
 
-        public buffer MyBuffer;
+    public buffer MyBuffer;
 
         public BlockTypeData[] AllBlockTypeDataArray = new BlockTypeData[BlockSize]
         {
@@ -145,6 +177,10 @@ namespace MTG_Tetris
                     {
                         MyBuffer.Draw("A", x * 2, y);
                     }
+                    else if((int)E_BLOCKTYPE.WALL == StageArray[y, x])
+                    {
+                        MyBuffer.Draw("0", x * 2, y);
+                    }
                 }
             }
         }
@@ -153,9 +189,9 @@ namespace MTG_Tetris
         int m_CurrentBlockType = 0;
         int m_RotType = 0; // 0 이면
         int m_BlockPosY = 0;
-        int m_BlockPosX = 0;
-        
-        
+        int m_BlockPosX = BLOCKINITPOSX;
+
+
         void BlockDraw()
         {
             BlockTypeData blocktypedata = AllBlockTypeDataArray[m_CurrentBlockType];
@@ -173,22 +209,134 @@ namespace MTG_Tetris
                 {
                     if( 1 == blocktypedata.GetBlockRotData(m_RotType, x, y) )
                     {
-
                         MyBuffer.Draw("A", (x + tempx) * 2
                             , y + tempy );
                     }
-                    
                 }
             }
 
         }
+
+        void HelpDraw()
+        {
+            // 점수
+
+
+            // 컨트롤 방법 대한부분
+
+
+            // 게임 오버
+            if( ISGameFlag )
+            {
+                MyBuffer.Draw("GameOver", 15 * 2, 15);
+            }
+        }
+
         public void Draw()
         {
             StageDraw();
             BlockDraw();
+            HelpDraw();
+
 
             MyBuffer.Print();
             MyBuffer.Clear();
+        }
+
+        bool ISDownCollision()
+        {
+
+            BlockTypeData blocktypedata = AllBlockTypeDataArray[m_CurrentBlockType];
+            int widthsize = 4;
+            int heightsize = 4;
+            int tempy = m_BlockPosY;
+            int tempx = m_BlockPosX;
+            int[,] blockdata = blocktypedata.GetBlockRotData(m_RotType);
+
+            for (int y = 0; y < heightsize; y++)
+            {
+                for (int x = 0; x < widthsize; x++)
+                {
+                    if (1 == blocktypedata.GetBlockRotData(m_RotType, x, y)
+                        && (StageArray[y + tempy, x + tempx] == (int)E_BLOCKTYPE.BLOCK
+                        || StageArray[y + tempy, x + tempx] == (int)E_BLOCKTYPE.WALL
+                        )
+                        )
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+
+        void StageDownBlock(int p_y)
+        {
+            for (int y = p_y; y >= 1; y--)
+            {
+                for (int x = 1; x < STAGEWIDTH + 1; x++)
+                {
+                    StageArray[y, x] = StageArray[y - 1, x];
+                }
+            }
+        }
+
+        void CheckSameBlock()
+        {
+
+            for (int y = STAGEHEIGHT - 1; y >= 0; y--)
+            {
+                bool ischeck = true;
+                for (int x = 1; x < STAGEWIDTH+1; x++)
+                {
+                    if(StageArray[y, x] != (int)E_BLOCKTYPE.BLOCK)
+                    {
+                        ischeck = false;
+                        break;
+                    }
+                }
+
+                if( ischeck )
+                {
+                    // 블럭 지우기
+                    // 점수 추가
+                    StageDownBlock(y);
+                    y++;
+                }
+            }
+
+
+        }
+
+        bool ISGameFlag = false;
+        bool ISGameOver()
+        {
+
+            BlockTypeData blocktypedata = AllBlockTypeDataArray[m_CurrentBlockType];
+            int widthsize = 4;
+            int heightsize = 4;
+            int tempy = m_BlockPosY;
+            int tempx = m_BlockPosX;
+            int[,] blockdata = blocktypedata.GetBlockRotData(m_RotType);
+
+            for (int y = 0; y < heightsize; y++)
+            {
+                for (int x = 0; x < widthsize; x++)
+                {
+                    if (1 == blocktypedata.GetBlockRotData(m_RotType, x, y)
+                        && (StageArray[y + tempy, x + tempx] == (int)E_BLOCKTYPE.BLOCK
+                        || StageArray[y + tempy, x + tempx] == (int)E_BLOCKTYPE.WALL
+                        )
+                        )
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         void UpdateLogic()
@@ -208,10 +356,22 @@ namespace MTG_Tetris
             if (isflag)
             {
                 m_BlockPosY++;
-                if (m_BlockPosY >= 16)
+
+                // 바닥과 충돌이 되면 새로운 블럭 만들도록 하기
+                if ( ISDownCollision() )
                 {
+                    m_BlockPosY--;
+
                     CopyBlockData();
+                    CheckSameBlock();
+
                     CreateRandomBlock();
+
+                    if( ISGameOver() )
+                    {
+                        ISGameFlag = true;
+                    }
+                    
                 }
 
             }
@@ -248,9 +408,38 @@ namespace MTG_Tetris
         void CreateRandomBlock()
         {
             // 새로운 블럭 생성
-            m_CurrentBlockType = MyRandom.GetRandMax(BlockSize);
+            m_CurrentBlockType = 0;// MyRandom.GetRandMax(BlockSize);
             m_BlockPosY = 0;
+            m_BlockPosX = BLOCKINITPOSX;
             m_RotType = 0;
+            
+        }
+
+        bool SideCollision()
+        {
+            BlockTypeData blocktypedata = AllBlockTypeDataArray[m_CurrentBlockType];
+            int widthsize = 4;
+            int heightsize = 4;
+            int tempy = m_BlockPosY;
+            int tempx = m_BlockPosX;
+            int[,] blockdata = blocktypedata.GetBlockRotData(m_RotType);
+
+            for (int y = 0; y < heightsize; y++)
+            {
+                for (int x = 0; x < widthsize; x++)
+                {
+                    if (1 == blocktypedata.GetBlockRotData(m_RotType, x, y)
+                        && (StageArray[y + tempy, x + tempx] == (int)E_BLOCKTYPE.BLOCK
+                        || StageArray[y + tempy, x + tempx] == (int)E_BLOCKTYPE.WALL
+                        )
+                        )
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         void UpdateInput()
@@ -265,9 +454,9 @@ namespace MTG_Tetris
                 {
                     m_BlockPosX++;
 
-                    if (m_BlockPosX >= 6)
+                    if ( SideCollision() )
                     {
-                        m_BlockPosX = 6;
+                        m_BlockPosX--;
                     }
                 }
 
@@ -276,9 +465,9 @@ namespace MTG_Tetris
                 {
                     m_BlockPosX--;
 
-                    if (m_BlockPosX < 0)
+                    if ( SideCollision() )
                     {
-                        m_BlockPosX = 0;
+                        m_BlockPosX++;
                     }
                 }
 
@@ -294,11 +483,19 @@ namespace MTG_Tetris
 
         public int GameLogic()
         {
-            UpdateInput();
+            if( !ISGameFlag )
+            {
+                UpdateInput();
 
-            UpdateLogic();
+                UpdateLogic();
 
-            Draw();
+                Draw();
+            }
+            else
+            {
+                Draw();
+            }
+
 
             return 0;
         }
@@ -314,6 +511,24 @@ namespace MTG_Tetris
 
             DelayTic = 200; // 0.5f
             NextTic = Environment.TickCount + DelayTic;
+
+
+            // 스테이지 벽에 대한 적용
+            for (int y = 0; y < STAGEHEIGHT; y++)
+            {
+                StageArray[y, 0] = (int)E_BLOCKTYPE.WALL;
+                StageArray[y, STAGEWIDTH + 1] = (int)E_BLOCKTYPE.WALL;
+            }
+            for (int x = 0; x < STAGEWIDTH + 2; x++)
+            {
+                StageArray[STAGEHEIGHT, x] = (int)E_BLOCKTYPE.WALL;
+            }
+
+
+            
+
+
+
 
             // 긴블럭에 대한 데이터 초기화
             AllBlockTypeDataArray[0].AllBlockData = new BlockTypeData.BlockElementData[]
