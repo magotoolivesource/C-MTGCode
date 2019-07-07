@@ -27,6 +27,7 @@ using DoubleBuffer;
 namespace MTG_Tetris
 {
 
+    #region 랜덤 함수용 나중에 복사 해서 사용하기
     public class MyRandom
     {
         private static Random m_Rand = new Random();
@@ -51,8 +52,9 @@ namespace MTG_Tetris
         }
 
     }
+    #endregion
 
-
+    #region 테스트 클래스 확인용임 없애도 됨
     public class TestCls
     {
         public int TestVal1;
@@ -70,8 +72,10 @@ namespace MTG_Tetris
         //}
 
     }
+    #endregion
 
 
+    #region 블럭정보 저장용 
 
     public class BlockTypeData
     {
@@ -82,8 +86,8 @@ namespace MTG_Tetris
 
         public BlockElementData[] AllBlockData = null;
 
-        
-        public int[,] GetBlockRotData( int p_rottype )
+
+        public int[,] GetBlockRotData(int p_rottype)
         {
             return AllBlockData[p_rottype].BlockData;
         }
@@ -95,19 +99,22 @@ namespace MTG_Tetris
 
     }
 
+    #endregion
+
+    #region 테트리스용 클래스
 
     public class Tertris
     {
+        #region 고정 상수값들
         const int STAGEHEIGHT = 20;
         const int STAGEWIDTH = 10;
         const int BLOCKINITPOSX = (int)((STAGEWIDTH + 2) * 0.5f);
         const int BlockSize = 4;
+        #endregion
 
+        // 화면 더블버퍼용 클래스
+        public buffer MyBuffer;
 
-        int m_Score = 0;
-        int DelayTic = 1000;
-
-        int NextTic = 0;
 
         public enum E_BLOCKTYPE
         {
@@ -118,7 +125,14 @@ namespace MTG_Tetris
             Max
         }
 
-        // 스테이지
+
+        int m_Score = 0;
+
+
+        int DelayTic = 1000;
+        int NextTic = 0;
+
+        // 스테이지 정보
         public int[,] StageArray = new int[STAGEHEIGHT + 1, STAGEWIDTH + 2]
         {
               {  2, 0, 0, 0, 0,       0, 0, 0, 0, 0   , 0, 2 }
@@ -149,8 +163,7 @@ namespace MTG_Tetris
         };
 
 
-        public buffer MyBuffer;
-
+        // 블럭들 정보 총 4개 가지고 있음 추가적으로 이곳에 내용들 추가하면됨
         public BlockTypeData[] AllBlockTypeDataArray = new BlockTypeData[BlockSize]
         {
             new BlockTypeData()
@@ -159,12 +172,27 @@ namespace MTG_Tetris
             , new BlockTypeData()
         };
 
+
         int[] BlockTypeAttribute = new int[BlockSize]
         {
             2, 3, 4, 5
         };
 
 
+        // 게임내에서 떨어지는 하나의 블럭에 대한 데이터값
+        int m_CurrentBlockType = 0;
+        int m_RotType = 0; // 0 이면
+        int m_BlockPosY = 0;
+        int m_BlockPosX = BLOCKINITPOSX;
+
+
+        // 게임 오버용 소스
+        bool ISGameFlag = false;
+
+
+        /// <summary>
+        /// 스테이지 드로잉용
+        /// </summary>
         void StageDraw()
         {
             int len = StageArray.Length;
@@ -183,7 +211,7 @@ namespace MTG_Tetris
                     {
                         MyBuffer.Draw("A", x * 2, y);
                     }
-                    else if((int)E_BLOCKTYPE.WALL == StageArray[y, x])
+                    else if ((int)E_BLOCKTYPE.WALL == StageArray[y, x])
                     {
                         MyBuffer.Draw("0", x * 2, y);
                     }
@@ -191,13 +219,11 @@ namespace MTG_Tetris
             }
         }
 
-        // 하나의 블럭에 대한 데이터값
-        int m_CurrentBlockType = 0;
-        int m_RotType = 0; // 0 이면
-        int m_BlockPosY = 0;
-        int m_BlockPosX = BLOCKINITPOSX;
+        
 
-
+        /// <summary>
+        /// 현재 블럭에 대한 정보를 이용한 화면에 블럭 드로잉
+        /// </summary>
         void BlockDraw()
         {
             BlockTypeData blocktypedata = AllBlockTypeDataArray[m_CurrentBlockType];
@@ -214,21 +240,24 @@ namespace MTG_Tetris
             {
                 for (int x = 0; x < widthsize; x++)
                 {
-                    if( 1 == blocktypedata.GetBlockRotData(m_RotType, x, y) )
+                    if (1 == blocktypedata.GetBlockRotData(m_RotType, x, y))
                     {
                         MyBuffer.Draw("A", (x + tempx) * 2
                             , y + tempy
-                            , (short)attributeval );
+                            , (short)attributeval);
                     }
                 }
             }
-
         }
 
+
+        /// <summary>
+        /// 화면에 추가적인 설명을 위한 드로잉함수
+        /// </summary>
         void HelpDraw()
         {
             int val = 10;
-            float  val2 = 10;
+            float val2 = 10;
             //printf("%d %f ", val, val2);
 
             string.Format("{1}, {0}", val, val2);
@@ -243,13 +272,17 @@ namespace MTG_Tetris
 
 
             // 게임 오버
-            if ( ISGameFlag )
+            if (ISGameFlag)
             {
                 MyBuffer.Draw("GameOver", 15 * 2, 15);
                 MyBuffer.Draw("Restart 'R' Press ", 15 * 2, 17);
             }
         }
 
+
+        /// <summary>
+        /// 전체 드로잉
+        /// </summary>
         public void Draw()
         {
             StageDraw();
@@ -260,35 +293,12 @@ namespace MTG_Tetris
             MyBuffer.Clear();
         }
 
-        //bool ISDownCollision()
-        //{
 
-        //    BlockTypeData blocktypedata = AllBlockTypeDataArray[m_CurrentBlockType];
-        //    int widthsize = 4;
-        //    int heightsize = 4;
-        //    int tempy = m_BlockPosY;
-        //    int tempx = m_BlockPosX;
-        //    int[,] blockdata = blocktypedata.GetBlockRotData(m_RotType);
-
-        //    for (int y = 0; y < heightsize; y++)
-        //    {
-        //        for (int x = 0; x < widthsize; x++)
-        //        {
-        //            if (1 == blocktypedata.GetBlockRotData(m_RotType, x, y)
-        //                && (StageArray[y + tempy, x + tempx] == (int)E_BLOCKTYPE.BLOCK
-        //                || StageArray[y + tempy, x + tempx] == (int)E_BLOCKTYPE.WALL
-        //                )
-        //                )
-        //            {
-        //                return true;
-        //            }
-        //        }
-        //    }
-
-        //    return false;
-        //}
-
-
+        /// <summary>
+        /// 블럭이 맞추어지면 현재 블럭 
+        /// 라인부터해서 위에있는 블럭들 하단으로 내려오도록 하는 소슨
+        /// </summary>
+        /// <param name="p_y"></param>
         void StageDownBlock(int p_y)
         {
             for (int y = p_y; y >= 1; y--)
@@ -300,22 +310,26 @@ namespace MTG_Tetris
             }
         }
 
+
+        /// <summary>
+        /// 블럭의 라인이 완성 되었는지 소스
+        /// </summary>
         void CheckSameBlock()
         {
 
             for (int y = STAGEHEIGHT - 1; y >= 0; y--)
             {
                 bool ischeck = true;
-                for (int x = 1; x < STAGEWIDTH+1; x++)
+                for (int x = 1; x < STAGEWIDTH + 1; x++)
                 {
-                    if(StageArray[y, x] != (int)E_BLOCKTYPE.BLOCK)
+                    if (StageArray[y, x] != (int)E_BLOCKTYPE.BLOCK)
                     {
                         ischeck = false;
                         break;
                     }
                 }
 
-                if( ischeck )
+                if (ischeck)
                 {
                     // 블럭 지우기
                     // 점수 추가
@@ -327,55 +341,31 @@ namespace MTG_Tetris
             }
         }
 
-        bool ISGameFlag = false;
-        //bool ISGameOver()
-        //{
-
-        //    BlockTypeData blocktypedata = AllBlockTypeDataArray[m_CurrentBlockType];
-        //    int widthsize = 4;
-        //    int heightsize = 4;
-        //    int tempy = m_BlockPosY;
-        //    int tempx = m_BlockPosX;
-        //    int[,] blockdata = blocktypedata.GetBlockRotData(m_RotType);
-
-        //    for (int y = 0; y < heightsize; y++)
-        //    {
-        //        for (int x = 0; x < widthsize; x++)
-        //        {
-        //            if (1 == blocktypedata.GetBlockRotData(m_RotType, x, y)
-        //                && (StageArray[y + tempy, x + tempx] == (int)E_BLOCKTYPE.BLOCK
-        //                || StageArray[y + tempy, x + tempx] == (int)E_BLOCKTYPE.WALL
-        //                )
-        //                )
-        //            {
-        //                return true;
-        //            }
-        //        }
-        //    }
-
-        //    return false;
-        //}
-
+        
+        /// <summary>
+        /// 인풋이 아닌 부분의 처리 데이터 처리부분
+        /// </summary>
         void UpdateLogic()
         {
             // 1초에 한번 
             //Environment.TickCount; // 윈도우 시작 했을때의 시간
 
+            // 0.2초에 한번씩 떨어지는 기본 소스
             int currenttic = Environment.TickCount;
             bool isflag = false;
-            if( NextTic <= currenttic)
+            if (NextTic <= currenttic)
             {
                 NextTic = currenttic + DelayTic;
                 isflag = true;
             }
-            
+
 
             if (isflag)
             {
                 m_BlockPosY++;
 
                 // 바닥과 충돌이 되면 새로운 블럭 만들도록 하기
-                if (StageNBlockCollision() )
+                if (StageNBlockCollision())
                 {
                     m_BlockPosY--;
 
@@ -384,7 +374,8 @@ namespace MTG_Tetris
 
                     CreateRandomBlock();
 
-                    if(StageNBlockCollision() )
+                    // 게임 오버가 되었는지 파악하기 위한 함수
+                    if (StageNBlockCollision())
                     {
                         ISGameFlag = true;
                     }
@@ -392,9 +383,14 @@ namespace MTG_Tetris
             }
         }
 
+
+        /// <summary>
+        /// 스페이스바 누르면 한번에 떨어지도록 하는 소스
+        /// </summary>
+        /// <returns></returns>
         bool DirectMoveDown()
         {
-            while(true)
+            while (true)
             {
                 m_BlockPosY++;
 
@@ -413,6 +409,10 @@ namespace MTG_Tetris
             return false;
         }
 
+        /// <summary>
+        /// 떨어지는 블럭이 다내려오게 되면 그위치에서 스테이지블럭정보에 
+        /// 해당 블럭에 대한 정보를 복사하기위한 함수
+        /// </summary>
         void CopyBlockData()
         {
 
@@ -441,6 +441,9 @@ namespace MTG_Tetris
 
         }
 
+        /// <summary>
+        /// 다음 블럭에 대해 랜덤하게 적용하기 위한 함수
+        /// </summary>
         void CreateRandomBlock()
         {
             // 새로운 블럭 생성
@@ -448,9 +451,13 @@ namespace MTG_Tetris
             m_BlockPosY = 0;
             m_BlockPosX = BLOCKINITPOSX;
             m_RotType = 0;
-            
+
         }
 
+        /// <summary>
+        /// 스테이지와 현재 블럭이 부딪히는지에 대한 처리
+        /// </summary>
+        /// <returns></returns>
         bool StageNBlockCollision()
         {
             BlockTypeData blocktypedata = AllBlockTypeDataArray[m_CurrentBlockType];
@@ -478,35 +485,13 @@ namespace MTG_Tetris
             return false;
         }
 
-        //bool SideCollision()
-        //{
-        //    BlockTypeData blocktypedata = AllBlockTypeDataArray[m_CurrentBlockType];
-        //    int widthsize = 4;
-        //    int heightsize = 4;
-        //    int tempy = m_BlockPosY;
-        //    int tempx = m_BlockPosX;
-        //    int[,] blockdata = blocktypedata.GetBlockRotData(m_RotType);
-
-        //    for (int y = 0; y < heightsize; y++)
-        //    {
-        //        for (int x = 0; x < widthsize; x++)
-        //        {
-        //            if (1 == blocktypedata.GetBlockRotData(m_RotType, x, y)
-        //                && (StageArray[y + tempy, x + tempx] == (int)E_BLOCKTYPE.BLOCK
-        //                || StageArray[y + tempy, x + tempx] == (int)E_BLOCKTYPE.WALL
-        //                )
-        //                )
-        //            {
-        //                return true;
-        //            }
-        //        }
-        //    }
-
-        //    return false;
-        //}
-
+        /// <summary>
+        /// 인풋 장치 키보드에 받아오는 값들 처리하기위한 함수
+        /// </summary>
         void UpdateInput()
         {
+
+            // 넌 블럭킹 방식으로 처리
             if (Console.KeyAvailable)
             {
                 ConsoleKeyInfo info = Console.ReadKey();
@@ -517,7 +502,7 @@ namespace MTG_Tetris
                 {
                     m_BlockPosX++;
 
-                    if (StageNBlockCollision() )
+                    if (StageNBlockCollision())
                     {
                         m_BlockPosX--;
                     }
@@ -528,30 +513,32 @@ namespace MTG_Tetris
                 {
                     m_BlockPosX--;
 
-                    if (StageNBlockCollision() )
+                    if (StageNBlockCollision())
                     {
                         m_BlockPosX++;
                     }
                 }
 
-                if( keyval == ConsoleKey.UpArrow
+                if (keyval == ConsoleKey.UpArrow
                     || keyval == ConsoleKey.W)
                 {
                     m_RotType = (m_RotType + 1) % 4;
                 }
 
-                if( keyval == ConsoleKey.Spacebar)
+                if (keyval == ConsoleKey.Spacebar)
                 {
                     DirectMoveDown();
                 }
-
             }
-            
         }
 
+        /// <summary>
+        /// 게임 진행 위한 함수
+        /// </summary>
+        /// <returns></returns>
         public int GameLogic()
         {
-            if( !ISGameFlag )
+            if (!ISGameFlag)
             {
                 UpdateInput();
                 UpdateLogic();
@@ -565,12 +552,13 @@ namespace MTG_Tetris
             return 0;
         }
 
-        
+        /// <summary>
+        /// 처음 시작하거나 재시작시 사용하기 위한 함수
+        /// </summary>
         void ResetStageData()
         {
             // 스코어 점수 초기화
             m_Score = 0;
-
 
             // 스테이지 전체 초기화
             for (int y = 0; y < STAGEHEIGHT + 1; y++)
@@ -594,17 +582,25 @@ namespace MTG_Tetris
 
 
             // 스테이지별 블럭에 대한 정보들 적용하기
-
         }
 
+
+        /// <summary>
+        /// 게임 처음 시작시 기본 세팅하기위한 함수
+        /// 버퍼 랜더를 사용하기 위한 초기화를 이곳에서 처리
+        /// 블럭에 대한 정보도 이곳에서 처리하고 있음
+        /// </summary>
         void InitData()
         {
+            // 더블 버퍼 초기화하기
             int width = 80;
             int height = 30;
             System.Console.SetWindowSize(width, height);
             System.Console.SetBufferSize(width, height);
             MyBuffer = new buffer(width, height, width, height);
 
+
+            // 게임에 대한 속도 제어용 값들
             DelayTic = 200; // 0.5f
             NextTic = Environment.TickCount + DelayTic;
 
@@ -799,7 +795,9 @@ namespace MTG_Tetris
             ResetStageData();
         }
 
-
+        /// <summary>
+        /// 게임 로직위한 함수
+        /// </summary>
         public void InGame()
         {
             int result = 0;
@@ -809,7 +807,7 @@ namespace MTG_Tetris
             {
                 result = GameLogic();
 
-                if ( result <= -1)
+                if (result <= -1)
                 {
                     break;
                 }
@@ -818,6 +816,10 @@ namespace MTG_Tetris
 
     }
 
+    #endregion
+
+
+    #region 기본 진입함수
 
     class Program
     {
@@ -825,10 +827,10 @@ namespace MTG_Tetris
         {
             Tertris ingameteritrs = new Tertris();
             ingameteritrs.InGame();
-
-
-
-
         }
     }
+
+    #endregion
+
+
 }
