@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace Sokoban
 {
+    // 현재 버그
+    // . 사라짐
+    // oo 연속으로 된곳은 그냥 하나로 합쳐짐
+    // 다음 스테이지 작업
 
     struct POINT2
     {
@@ -36,6 +40,67 @@ namespace Sokoban
         List<POINT2> m_GoalPos = new List<POINT2>();
 
 
+        bool ISGoalPos(int p_x, int p_y)
+        {
+            for (int i = 0; i < m_GoalPos.Count; i++)
+            {
+                if(m_GoalPos[i].x == p_x
+                    && m_GoalPos[i].y == p_y)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        void SetStage(int p_stageindex)
+        {
+            #region 현재 스테이지 m_CurrentStage 로 복사
+
+            string[] currentstage = m_StageArray[p_stageindex];
+
+
+            int ysize = currentstage.Length;
+            int xsize = currentstage[0].Length;
+
+            m_CurrentStage = new char[ysize, xsize];
+
+            m_XStageSize = xsize;
+            m_YStageSize = ysize;
+            m_GoalPos.Clear();
+
+            //m_GoalPos.Clear();
+            //m_GoalPos.RemoveAt(0);
+            //"==============================",
+            //"==                          ==",
+            //"==      @    o     ===========",
+            // 위치값 세팅
+            for (int y = 0; y < currentstage.Length; y++)
+            {
+                string tempstr = currentstage[y];
+                //char[] tempchararr = tempstr.ToArray();
+
+                for (int x = 0; x < xsize; x++)
+                {
+                    m_CurrentStage[y, x] = tempstr[x];// tempchararr[x];
+
+                    if (tempstr[x].CompareTo('@') == 0)
+                    {
+                        PlayerPosX = x;
+                        PlayerPosY = y;
+                        m_CurrentStage[y, x] = ' ';
+                    }
+
+                    if (tempstr[x].CompareTo('.') == 0)
+                    {
+                        m_GoalPos.Add(new POINT2(x, y));
+                    }
+                }
+            }
+
+            #endregion
+        }
 
         public override void Init()
         {
@@ -43,45 +108,7 @@ namespace Sokoban
             base.Init();
 
 
-
-            #region 현재 스테이지 m_CurrentStage 로 복사
-            int ysize = m_StageArray.Length;
-            int xsize = m_StageArray[0].Length;
-
-            m_CurrentStage = new char[ysize ,xsize];
-
-            m_XStageSize = xsize;
-            m_YStageSize = ysize;
-
-            //"==============================",
-            //"==                          ==",
-            //"==      @    o     ===========",
-            // 위치값 세팅
-            for (int y = 0; y < m_StageArray.Length; y++)
-            {
-                string tempstr = m_StageArray[y];
-                //char[] tempchararr = tempstr.ToArray();
-
-                for (int x = 0; x < xsize; x++)
-                {
-                    m_CurrentStage[y, x] = tempstr[x];// tempchararr[x];
-
-                    if( tempstr[x].CompareTo( '@' ) == 0 )
-                    {
-                        PlayerPosX = x;
-                        PlayerPosY = y;
-                        m_CurrentStage[y, x] = ' ';
-                    }
-
-                    if(tempstr[x].CompareTo('.') == 0)
-                    {
-                        m_GoalPos.Add(new POINT2(x, y) );
-                    }
-                }
-            }
-
-            #endregion
-
+            SetStage( m_StageIndex );
         }
 
         bool Move( int p_x, int p_y
@@ -100,7 +127,7 @@ namespace Sokoban
             }
 
 
-            // ->   @ === 
+            // ->   @o === 
             if ( m_CurrentStage[p_y, p_x] == '=' )
             {
                 return false;
@@ -109,12 +136,16 @@ namespace Sokoban
             {
                 if(m_CurrentStage[p_y, p_x] == 'o')
                 {
-                    if(m_CurrentStage[p_dirctiony, p_directionx] == '=')
+                    if(m_CurrentStage[p_dirctiony, p_directionx] == '='
+                       || m_CurrentStage[p_dirctiony, p_directionx] == 'o')
                     {
                         return false;
                     }
 
-                    m_CurrentStage[p_y, p_x] = ' ';
+                    m_CurrentStage[p_y, p_x] = ' '; // 원상 복귀 되는곳
+                    if( ISGoalPos(p_x, p_y) )
+                        m_CurrentStage[p_y, p_x] = '.';
+
                     m_CurrentStage[p_dirctiony, p_directionx] = 'o';
                 }
             }
@@ -128,6 +159,12 @@ namespace Sokoban
                 return;
 
             // 소스 로직 적용하기
+
+
+            if( m_CurrentKeyInfo.Value.Key == ConsoleKey.R)
+            {
+                SetStage(m_StageIndex);
+            }
 
             int tempposx = PlayerPosX;
             int tempposy = PlayerPosY;
@@ -205,16 +242,42 @@ namespace Sokoban
         //    //"==============================",
         //};
 
-        
-        protected string[] m_StageArray = new string[]
+        protected int m_StageIndex = 0;
+        protected string[][] m_StageArray = new string[][]
         {
-            "==============================",
-            "==  @                       ==",
-            "==           o     =======  ==",
-            "==      o  ===             .==",
-            "==                         .==",
-            "==============================",
+            new string[]
+            {
+                "==============================",
+                "==                          ==",
+                "==        @  o     =======  ==",
+                "==      o  ===             .==",
+                "==                         .==",
+                "==============================",
+            }
+
+            , new string[]
+            {
+                "==========================",
+                "==        =             ==",
+                "==    @ ==== o   o      ==",
+                "==        =      ====   ==",
+                "==               ..     ==",
+                "==========================",
+            }
+
+            , new string[]
+            {
+                "======================",
+                "=                    =",
+                "=   @   o ======= o  =",
+                "=         . .        =",
+                "=                    =",
+                "======================",
+            }
+
         };
+
+
 
         protected int m_XStageSize = 0;
         protected int m_YStageSize = 0;
@@ -276,7 +339,14 @@ namespace Sokoban
                 {
                     //string tempstr = string.Format( "{0}", m_CurrentStage[y, x] );
                     //m_Buffer.Draw(tempstr, x, y);
-                    m_Buffer.Draw(m_CurrentStage[y, x], x, y);
+
+                    if(m_CurrentStage[y, x] == '.' )
+                        m_Buffer.Draw(m_CurrentStage[y, x], x, y, 12);
+                    else if(m_CurrentStage[y, x] == 'o')
+                        m_Buffer.Draw(m_CurrentStage[y, x], x, y, 8);
+                    else
+                        m_Buffer.Draw(m_CurrentStage[y, x], x, y);
+
                 }
             }
 
@@ -288,7 +358,7 @@ namespace Sokoban
 
         void LoopPlayerDraw()
         {
-            m_Buffer.Draw("@", PlayerPosX, PlayerPosY);
+            m_Buffer.Draw("@", PlayerPosX, PlayerPosY, 4 );
 
         }
 
@@ -296,9 +366,21 @@ namespace Sokoban
         {
             if(m_ISStageClear)
             {
+                m_ISStageClear = false;
+
                 m_Buffer.Draw("Stage Clear : ", 35, 10);
+
+                m_StageIndex = (m_StageIndex + 1);
+
+                if(m_StageIndex < 3)
+                    SetStage(m_StageIndex);
             }
 
+
+            if (m_StageIndex >= 3)
+            {
+                m_Buffer.Draw("Game Clear : ", 35, 10);
+            }
         }
         protected override void LoopDraw()
         {
