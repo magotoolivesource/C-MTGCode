@@ -163,6 +163,23 @@ namespace DoubleBuffer
 
 
         }
+
+
+        public void Draw(char p_char, int Width, int Height
+            , short attribute = 15) //Draws the image to the buffer
+        {
+            if (Width > windowWidth - 1 || Height > windowHeight - 1)
+            {
+                throw new System.ArgumentOutOfRangeException();
+            }
+
+            buf[(Width) + (Height * width)].Char.AsciiChar = (byte)(int)p_char; //Height * width is to get to the correct spot (since this array is not two dimensions).
+            if (attribute != 0)
+                buf[(Width ) + (Height * width)].Attributes = attribute;
+        }
+
+
+
         /// <summary>
         /// Prints the buffer to the screen.
         /// </summary>
