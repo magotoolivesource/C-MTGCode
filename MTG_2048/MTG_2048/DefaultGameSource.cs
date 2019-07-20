@@ -8,6 +8,26 @@ namespace InGameEngine
 {
     abstract class DefaultGameSource
     {
+        protected static Random m_Rand = new Random();
+
+        public static int Range()
+        {
+            return m_Rand.Next();
+        }
+
+        public static int Range(int p_max)
+        {
+            return m_Rand.Next(p_max);
+        }
+
+        public static int Range(int p_min, int p_max)
+        {
+            return m_Rand.Next(p_min, p_max);
+        }
+
+
+
+
         protected buffer m_Buffer;
         protected const int WindowWidth = 80;
         protected const int WindowHeight = 30;

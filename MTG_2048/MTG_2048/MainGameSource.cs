@@ -8,8 +8,11 @@ using InGameEngine;
 
 namespace MTG_2048
 {
-    class MainGameSource : DefaultGameSource
+    class MainGameSource : DefaultGameSource 
     {
+        //List<int> testint = new List<int>();
+
+
         //int[][] BoardTile = new int[4][]
         //{
         //    new int[4]
@@ -44,14 +47,11 @@ namespace MTG_2048
         {
             base.Init();
 
-
             //BoardTile = new int[4][];
             //BoardTile[0] = new int[4];
             //BoardTile[0][0] = 0;
             //BoardTile[0][1] = 2;
             //BoardTile[1] = new int[4];
-
-
 
         }
 
@@ -77,8 +77,34 @@ namespace MTG_2048
 
         }
 
+
+        int m_RandPosx = 0;
+        int m_RandPosy = 0;
+
         void DrawBlock()
         {
+            //MainGameSource: DefaultGameSource
+
+            // as 참고용 소스  ------------------
+            //MainGameSource test = this;
+            //dynamiccast<>()
+            //bool source = this is InGameEngine.buffer;
+            // as 참고용 소스 ------------------
+
+
+            //Random rand = new Random();
+            //int posx = rand.Next(0, 4);
+            //int posy = rand.Next(0, 4);
+
+            int posx = DefaultGameSource.Range(GRIDSIZE);
+            int posy = DefaultGameSource.Range(GRIDSIZE);
+
+            m_Buffer.Draw("2", (posx * 4) + (posx + 1)
+                , (posy * 3) + ( posy + 1 )
+                , (short)ConsoleColor.Red );
+            
+            //Console.SetCursorPosition(6, 9);
+            //Console.Write("2");
 
         }
 
