@@ -43,6 +43,15 @@ namespace MTG_2048
         };
 
 
+        // 중복 되지 않는 랜덤 타일 적용하기
+        void AddRandTile()
+        {
+            int randx = DefaultGameSource.Range(GRIDSIZE);
+            int randy = DefaultGameSource.Range(GRIDSIZE);
+
+            BoardTile[randy, randx] = DefaultGameSource.Range(2) == 0 ? 2 : 4;
+        }
+
         public override void Init()
         {
             base.Init();
@@ -52,6 +61,27 @@ namespace MTG_2048
             //BoardTile[0][0] = 0;
             //BoardTile[0][1] = 2;
             //BoardTile[1] = new int[4];
+
+            
+            AddRandTile();
+            AddRandTile();
+            AddRandTile();
+            AddRandTile();
+            AddRandTile();
+            AddRandTile();
+            AddRandTile();
+            AddRandTile();
+            AddRandTile();
+            AddRandTile();
+            AddRandTile();
+            AddRandTile();
+            AddRandTile();
+            AddRandTile();
+            AddRandTile();
+            AddRandTile();
+            AddRandTile();
+            AddRandTile();
+            AddRandTile();
 
         }
 
@@ -81,6 +111,8 @@ namespace MTG_2048
         int m_RandPosx = 0;
         int m_RandPosy = 0;
 
+        Random rand = new Random();
+
         void DrawBlock()
         {
             //MainGameSource: DefaultGameSource
@@ -96,15 +128,42 @@ namespace MTG_2048
             //int posx = rand.Next(0, 4);
             //int posy = rand.Next(0, 4);
 
-            int posx = DefaultGameSource.Range(GRIDSIZE);
-            int posy = DefaultGameSource.Range(GRIDSIZE);
 
-            m_Buffer.Draw("2", (posx * 4) + (posx + 1)
-                , (posy * 3) + ( posy + 1 )
-                , (short)ConsoleColor.Red );
-            
+            //int posx = rand.Next(GRIDSIZE);// DefaultGameSource.Range(GRIDSIZE);
+            //int posy = DefaultGameSource.Range(GRIDSIZE);
+
+            //m_Buffer.Draw("2", (posx * 4) + (posx + 1)
+            //    , (posy * 3) + ( posy + 1 )
+            //    , (short)ConsoleColor.Red );
+
             //Console.SetCursorPosition(6, 9);
             //Console.Write("2");
+
+
+
+
+            int ysize = BoardTile.GetLength(0);
+            int xsize = BoardTile.GetLength(1);
+
+            int posx = 0;
+            int posy = 0;
+            for (int y = 0; y < ysize; y++)
+            {
+                for (int x = 0; x < xsize; x++)
+                {
+                    if( BoardTile[y, x] != 0 )
+                    {
+                        posx = (x * GRIDSIZE) + (x + 1);
+                        posy = (y * (GRIDSIZE - 1)) + (y + 1);
+
+                        //string tempstr = string.Format( "{0}", BoardTile[y, x]);
+                        m_Buffer.Draw(BoardTile[y, x].ToString() , posx, posy );
+                    }
+                    
+
+                }
+            }
+
 
         }
 
