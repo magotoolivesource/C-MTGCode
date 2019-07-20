@@ -6,7 +6,8 @@ using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 using System.IO;
 
-// 
+// 소스 받은곳 싸이트 정보
+// https://code.msdn.microsoft.com/windowsdesktop/C-Console-Double-Buffer-adc31032/sourcecode?fileId=62146&pathId=1031194054
 namespace InGameEngine
 {
     /*
