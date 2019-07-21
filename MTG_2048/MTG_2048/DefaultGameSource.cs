@@ -20,6 +20,17 @@ namespace InGameEngine
             return m_Rand.Next(p_max);
         }
 
+        public static bool RangePersent(int p_persent )
+        {
+            int rand = m_Rand.Next(100);
+            return rand <= p_persent ? true : false;
+        }
+
+        public static int RangeInclude(int p_max)
+        {
+            return m_Rand.Next(p_max + 1);
+        }
+
         public static int Range(int p_min, int p_max)
         {
             return m_Rand.Next(p_min, p_max);

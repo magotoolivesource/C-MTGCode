@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +11,8 @@ namespace MTG_2048
 {
     class MainGameSource : DefaultGameSource 
     {
+        const bool ISDebug = true;
+
         //List<int> testint = new List<int>();
 
 
@@ -176,9 +179,41 @@ namespace MTG_2048
 
         }
 
-        
-        // 중복 되지 않는 랜덤 타일 적용하기
         bool AddRandTile()
+        {
+            List<POINT2D> tempindexarr2 = new List<POINT2D>();
+            for (int y = 0; y < GRIDSIZE; y++)
+            {
+                for (int x = 0; x < GRIDSIZE; x++)
+                {
+                    if (BoardTile[y, x] == 0)
+                    {
+                        tempindexarr2.Add(new POINT2D(x, y));
+                    }
+                }
+            }
+
+            if (tempindexarr2.Count <= 0)
+            {
+                // 게임오버가 되도록
+                Debug.WriteLine("오버 되었음 현재 게임 오버임 : " );
+                return false;
+            }
+
+            int index = DefaultGameSource.Range(tempindexarr2.Count);
+            POINT2D temppos = tempindexarr2[index];
+            //tempindexarr2[DefaultGameSource.Range(tempindexarr2.Count)].x;
+            //tempindexarr2[DefaultGameSource.Range(tempindexarr2.Count)].y;
+
+            int persent = Range(100);
+            BoardTile[temppos.y, temppos.x] = persent >= 80 ?  4 : 2;
+
+            return true;
+        }
+
+
+            // 중복 되지 않는 랜덤 타일 적용하기
+        bool TempAddRandTile()
         {
             List<int> tempindexarr = new List<int>();
             List<POINT2D> tempindexarr2 = new List<POINT2D>();
@@ -207,6 +242,7 @@ namespace MTG_2048
             // 방법2
 
 
+
             if (tempindexarr2.Count <= 0)
             {
                 // 게임오버가 되도록
@@ -224,6 +260,7 @@ namespace MTG_2048
 
         public override void Init()
         {
+            Debug.WriteLine("처음 시작 : ");
             base.Init();
 
             //BoardTile = new int[4][];
@@ -232,26 +269,23 @@ namespace MTG_2048
             //BoardTile[0][1] = 2;
             //BoardTile[1] = new int[4];
 
-            
-            AddRandTile();
-            AddRandTile();
-            AddRandTile();
-            AddRandTile();
-            AddRandTile();
-            AddRandTile();
-            AddRandTile();
-            AddRandTile();
-            AddRandTile();
-            AddRandTile();
-            AddRandTile();
-            AddRandTile();
-            AddRandTile();
-            AddRandTile();
-            AddRandTile();
-            AddRandTile();
-            AddRandTile();
-            AddRandTile();
-            AddRandTile();
+
+            if(ISDebug)
+            {
+                // 테스트용 맵을 세팅
+                BoardTile[0, 0] = 2;
+                BoardTile[0, 1] = 4;
+                BoardTile[1, 0] = 2;
+            }
+            else
+            {
+                // 실제 게임용 소스
+                AddRandTile();
+                AddRandTile();
+            }
+
+
+
 
         }
 
@@ -353,7 +387,23 @@ namespace MTG_2048
 
         protected override void LoopInputFN()
         {
-            
+            // 넌 블럭킹 방식
+            if (m_CurrentKeyInfo == null)
+                return;
+
+            ConsoleKey keyval = m_CurrentKeyInfo.Value.Key;
+            // 소스 로직 적용하기
+            if ( keyval == ConsoleKey.RightArrow
+                || keyval == ConsoleKey.D)
+            {
+                // 오른쪽 이동
+                //BoardTile[];
+
+
+            }
+
+
+
         }
     }
 }
