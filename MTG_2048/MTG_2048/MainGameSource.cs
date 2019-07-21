@@ -43,14 +43,184 @@ namespace MTG_2048
         };
 
 
-        // 중복 되지 않는 랜덤 타일 적용하기
-        void AddRandTile()
-        {
-            int randx = DefaultGameSource.Range(GRIDSIZE);
-            int randy = DefaultGameSource.Range(GRIDSIZE);
+        #region 랜덤값 찾기용 소스
+        //// 0, 1, 2, 3  -> 인덱스
+        //// 2, 0, 0, 0  -> 실제값
+        //int[] TempArray = new int[GRIDSIZE]; 
+        //int m_TempInputSize = 0;
 
-            BoardTile[randy, randx] = DefaultGameSource.Range(2) == 0 ? 2 : 4;
+        //List<int> m_TempArray3 = new List<int>();
+        //List<int> m_TempArray4 = new List<int>();
+
+        //void InitRandomTile()
+        //{
+        //    for (int i = 0; i < TempArray.Length; i++)
+        //    {
+        //        m_TempArray4.Add(i); // 0, 1, 2, 3
+        //    }
+        //}
+        //void AddRandomTile4()
+        //{
+        //    for (int i = 0; i < 3; i++)
+        //    {
+        //        if (m_TempArray4.Count <= 0)
+        //        {
+        //            return;
+        //        }
+
+        //        int randomindex = DefaultGameSource.Range(m_TempArray4.Count); // 1
+        //        int arrindex = m_TempArray4[randomindex];
+        //        TempArray[arrindex] = 2;
+
+        //        m_TempArray4.RemoveAt(randomindex); // 0, 2, 3 -> 0, 3
+        //    }
+
+        //}
+
+        //void AddRandomTime3()
+        //{
+        //    for (int x = 0; x < 3; x++)
+        //    {
+        //        m_TempArray3.Clear();
+        //        for (int i = 0; i < TempArray.Length; i++)
+        //        {
+        //            if (TempArray[i] == 0)
+        //            {
+        //                m_TempArray3.Add(i);
+        //            }
+        //        }
+
+        //        if(m_TempArray3.Count <= 0)
+        //            break;
+
+        //        int randomindex = DefaultGameSource.Range(m_TempArray3.Count);
+        //        TempArray[randomindex] = 2;
+        //    }
+
+        //}
+
+        //void AddRandomTile2()
+        //{
+        //    int temparray = 0;
+        //    int[] m_TempArray2 = new int[GRIDSIZE];
+        //    for (int i = 0; i < TempArray.Length; i++)
+        //    {
+        //        m_TempArray2[i] = -1;
+
+        //        if (TempArray[i] == 0)
+        //        {
+        //            m_TempArray2[temparray] = i; // 1, 2, 3, -1
+        //            temparray++;
+        //        }
+        //    }
+
+        //    if( temparray <= 0 )
+        //    {
+        //        // 에러 코드 적용하기
+        //        return;
+        //    }
+
+        //    int index = DefaultGameSource.Range(0, temparray);
+        //    int arrindex = m_TempArray2[index];
+        //    TempArray[arrindex] = 2;
+        //}
+
+        //// 중복 되지 않는 랜덤 타일 적용하기
+        //void AddRandTile0()
+        //{
+
+        //    if(m_TempInputSize >= GRIDSIZE)
+        //    {
+        //        return;
+        //    }
+
+        //    int temparray = 0;
+        //    while(true)
+        //    {
+        //        ++temparray;
+        //        int randx = DefaultGameSource.Range(GRIDSIZE);
+        //        if(TempArray[randx] == 0 )
+        //        {
+        //            TempArray[randx] = 2;
+        //            m_TempInputSize++;
+        //            break;
+        //        }
+
+        //        if(temparray >= 99999 )
+        //        {
+        //            break;
+        //        }
+
+        //    }
+
+
+        //    //int randx = DefaultGameSource.Range(GRIDSIZE);
+        //    //int randy = DefaultGameSource.Range(GRIDSIZE);
+
+        //    //BoardTile[randy, randx] = DefaultGameSource.Range(2) == 0 ? 2 : 4;
+        //}
+
+        #endregion
+
+
+
+        class POINT2D
+        {
+            public POINT2D(int p_x, int p_y)
+            {
+                x = p_x;
+                y = p_y;
+            }
+            public int x;
+            public int y;
+
         }
+
+        
+        // 중복 되지 않는 랜덤 타일 적용하기
+        bool AddRandTile()
+        {
+            List<int> tempindexarr = new List<int>();
+            List<POINT2D> tempindexarr2 = new List<POINT2D>();
+            for (int y = 0; y < GRIDSIZE; y++)
+            {
+                for (int x = 0; x < GRIDSIZE; x++)
+                {
+                    if(BoardTile[y, x] == 0 )
+                    {
+                        tempindexarr2.Add(new POINT2D(x, y));
+                        tempindexarr.Add(y * GRIDSIZE + x);
+                    }
+                }
+            }
+
+            if (tempindexarr.Count <= 0)
+            {
+                return false;
+            }
+
+            // 방법2
+            int randindex = DefaultGameSource.Range(tempindexarr.Count);
+            int val = tempindexarr[randindex];
+            int indexy = (int)(val / GRIDSIZE); //  6 -> 1
+            int indexx = val % GRIDSIZE; // 6%4 -> 2
+            // 방법2
+
+
+            if (tempindexarr2.Count <= 0)
+            {
+                // 게임오버가 되도록
+                return false;
+            }
+
+            randindex = DefaultGameSource.Range(tempindexarr2.Count);
+            POINT2D temppos = tempindexarr2[randindex];
+            BoardTile[temppos.y, temppos.x] = 2;
+
+            return true;
+        }
+
+
 
         public override void Init()
         {
