@@ -273,9 +273,11 @@ namespace MTG_2048
             if(ISDebug)
             {
                 // 테스트용 맵을 세팅
-                BoardTile[0, 0] = 2;
-                BoardTile[0, 1] = 4;
-                BoardTile[1, 0] = 2;
+                BoardTile[0, 0] = 4;
+                BoardTile[0, 1] = 2;
+                BoardTile[0, 2] = 2;
+                //BoardTile[0, 3] = 4;
+                //BoardTile[1, 0] = 2;
             }
             else
             {
@@ -363,8 +365,6 @@ namespace MTG_2048
                         //string tempstr = string.Format( "{0}", BoardTile[y, x]);
                         m_Buffer.Draw(BoardTile[y, x].ToString() , posx, posy );
                     }
-                    
-
                 }
             }
 
@@ -398,11 +398,131 @@ namespace MTG_2048
             {
                 // 오른쪽 이동
                 //BoardTile[];
+                // 2, 0, 2, 0
 
+                //BoardTile[0, 0] = 0;
+                //BoardTile[0, 3] = 2;
+
+                for (int y = 0; y < GRIDSIZE; y++)
+                {
+                    for (int i = GRIDSIZE - 2; i >= 0; i--)
+                    {
+                        // i = 1 // x = 2
+                        for (int x = i; x < GRIDSIZE - 1; x++)
+                        {
+                            if (BoardTile[y, x + 1] == BoardTile[y, x])
+                            {
+                                BoardTile[y, x + 1] += BoardTile[y, x];
+                                BoardTile[y, x] = 0;
+                            }
+                            else if(BoardTile[y, x + 1] == 0
+                                && BoardTile[y, x] != 0)
+                            {
+                                BoardTile[y, x + 1] = BoardTile[y, x];
+                                BoardTile[y, x] = 0;
+                            }
+
+                        }
+
+                    }
+                }
+            }
+
+
+            if (keyval == ConsoleKey.LeftArrow
+                || keyval == ConsoleKey.A)
+            {
+
+                for (int y = 0; y < GRIDSIZE; y++)
+                {
+
+                    for (int i = 1; i < GRIDSIZE; i++)
+                    {
+                        for (int x = i; x >= 1; x--)
+                        {
+                            if (BoardTile[y, x - 1] == BoardTile[y, x])
+                            {
+                                BoardTile[y, x - 1] += BoardTile[y, x];
+                                BoardTile[y, x] = 0;
+                            }
+                            else if (BoardTile[y, x - 1] == 0
+                                && BoardTile[y, x] != 0)
+                            {
+                                BoardTile[y, x - 1] = BoardTile[y, x];
+                                BoardTile[y, x] = 0;
+                            }
+                        }
+
+                    }
+                }
+                
 
             }
 
 
+            if (keyval == ConsoleKey.UpArrow
+                || keyval == ConsoleKey.W)
+            {
+
+                // left 소스 참고
+                for (int x = 0; x < GRIDSIZE; x++)
+                {
+                    // 위로
+                    for (int i = 1; i < GRIDSIZE; i++)
+                    {
+                        for (int y = i; y >= 1; y--)
+                        {
+                            if (BoardTile[y - 1, x] == BoardTile[y, x])
+                            {
+                                BoardTile[y - 1, x] += BoardTile[y, x];
+                                BoardTile[y, x] = 0;
+                            }
+                            else if (BoardTile[y - 1, x] == 0
+                                && BoardTile[y, x] != 0)
+                            {
+                                BoardTile[y - 1, x] = BoardTile[y, x];
+                                BoardTile[y, x] = 0;
+                            }
+                        }
+
+                    }
+
+                }
+
+                
+
+            }
+
+            if (keyval == ConsoleKey.DownArrow
+                || keyval == ConsoleKey.S)
+            {
+                // 오른쪽 이동 소스 참고
+                for (int x = 0; x < GRIDSIZE; x++)
+                {
+                    for (int i = GRIDSIZE - 2; i >= 0; i--)
+                    {
+                        for (int y = i; y < GRIDSIZE - 1; y++)
+                        {
+                            if(BoardTile[y + 1, x] == BoardTile[y, x] )
+                            {
+                                BoardTile[y + 1, x] += BoardTile[y, x];
+                                BoardTile[y, x] = 0;
+                            }
+                            else if (BoardTile[y + 1, x] == 0
+                                && BoardTile[y, x] != 0)
+                            {
+                                BoardTile[y + 1, x] = BoardTile[y, x];
+                                BoardTile[y, x] = 0;
+                            }
+                        }
+
+                    }
+                }
+            }
+
+
+
+            AddRandTile();
 
         }
     }
