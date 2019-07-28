@@ -10,8 +10,15 @@ namespace MTG_TankGame
     {
         static void Main(string[] args)
         {
-            InGameTank tankgame = new InGameTank();
-            tankgame.InGameStart();
+            //InGameTank tankgame = new InGameTank();
+            //tankgame.InGameStart();
+
+
+            //InGameTank tankgame = InGameTank.Instance();
+            //tankgame.InGameStart();
+
+            InGameTank.Instance().InGameStart();
+
 
 
         }

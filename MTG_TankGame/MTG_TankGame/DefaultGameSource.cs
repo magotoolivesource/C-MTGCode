@@ -6,6 +6,23 @@ using System.Threading.Tasks;
 
 namespace InGameEngine
 {
+    class Singleton<T> where T : class, new()
+    {
+        static T m_Instance = null;
+
+        public static T Instance()
+        {
+            if (m_Instance == null)
+            {
+                m_Instance = new T();
+            }
+
+            return m_Instance;
+        }
+    }
+
+
+
     abstract class DefaultGameSource
     {
         protected static Random m_Rand = new Random();

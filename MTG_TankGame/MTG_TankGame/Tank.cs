@@ -24,13 +24,18 @@ namespace MTG_TankGame
         public Vector2 CurrentPos;
         public int HP = 2;
         Stage m_CurrentStageData = null;
-        E_Driection m_DirectionVal = E_Driection.Max;
+        public E_Driection m_DirectionVal = E_Driection.Max;
+        InGameTank m_LinkInGameTank = null;
 
-        public void InitTankData( Vector2 p_initpos, Stage p_stagedata )
+        public void InitTankData( Vector2 p_initpos
+            //, Stage p_stagedata
+            //, InGameTank p_tankmanager
+            )
         {
-            m_CurrentStageData = p_stagedata;
+            m_CurrentStageData = InGameTank.Instance().m_InGameStage;// p_stagedata;
             CurrentPos = p_initpos;
             HP = 2;
+            m_LinkInGameTank = InGameTank.GetI;
         }
 
         public void DrawTank(buffer p_buff )
@@ -38,19 +43,11 @@ namespace MTG_TankGame
             p_buff.Draw("A", CurrentPos.X, CurrentPos.Y);
 
 
-            foreach (var item in m_BulletList)
-            {
-                item.DrawBullet(p_buff);
-            }
-            
         }
 
         public void UpdateTank()
         {
-            foreach (var item in m_BulletList)
-            {
-                item.UpdateMove();
-            }
+
         }
 
         public void Move(E_Driection p_direction)
@@ -126,13 +123,16 @@ namespace MTG_TankGame
         //}
 
 
-        List<Bullet> m_BulletList = new List<Bullet>();
+        
         public void Fire()
         {
-            Bullet bullet = new Bullet();
-            bullet.InitSetting(CurrentPos, m_DirectionVal, 1);
-            m_BulletList.Add(bullet);
+            
 
+            //m_LinkInGameTank.CreateBullet(this);
+
+            InGameTank.Instance().CreateBullet(this);
+
+            ;
         }
 
     }

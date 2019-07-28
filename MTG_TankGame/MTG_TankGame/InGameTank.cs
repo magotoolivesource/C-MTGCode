@@ -7,10 +7,43 @@ using System.Threading.Tasks;
 
 namespace MTG_TankGame
 {
+
     class InGameTank : DefaultGameSource
     {
+        /// <summary>
+        /// 싱글톤
+        /// </summary>
+        static InGameTank m_Instance = null;
 
-        Stage m_InGameStage = null;
+        public static InGameTank Instance()
+        {
+            if (m_Instance == null)
+            {
+                m_Instance = new InGameTank();
+            }
+
+            return m_Instance;
+        }
+
+        public static InGameTank GetI
+        {
+            get
+            {
+                if (m_Instance == null)
+                {
+                    m_Instance = new InGameTank();
+                }
+
+                return m_Instance;
+            }
+        }
+
+
+
+
+
+
+        public Stage m_InGameStage = null;
 
         Tank m_MyTank = null;
         Tank m_EnemyTank = null;
@@ -31,7 +64,7 @@ namespace MTG_TankGame
             pos.Y = 5;
 
             m_MyTank = new Tank();
-            m_MyTank.InitTankData(pos, m_InGameStage );
+            m_MyTank.InitTankData(pos);
             m_TankArray[0] = m_MyTank;
 
 
@@ -74,6 +107,12 @@ namespace MTG_TankGame
             {
                 if(tankcls != null)
                     tankcls.DrawTank(m_Buffer);
+            }
+
+
+            foreach (var bullet in m_BulletList)
+            {
+                bullet.DrawBullet(m_Buffer);
             }
         }
 
@@ -120,10 +159,19 @@ namespace MTG_TankGame
 
         }
 
+        void LoopUpdateBullet()
+        {
+            foreach (var bullet in m_BulletList)
+            {
+                bullet.UpdateMove();
+            }
+        }
+
         protected override void LoopInputFN()
         {
-            m_MyTank.UpdateTank();
+            //m_MyTank.UpdateTank();
 
+            LoopUpdateBullet();
 
             if (m_CurrentKeyInfo == null)
                 return;
@@ -145,6 +193,16 @@ namespace MTG_TankGame
             //m_MyTank.UpdateMove( m_CurrentKeyInfo.Value );
 
             //m_EnemyTank.UpdateAI();
+
+        }
+
+
+        List<Bullet> m_BulletList = new List<Bullet>();
+        public void CreateBullet(Tank p_tank)
+        {
+            Bullet bullet = new Bullet();
+            bullet.InitSetting(p_tank.CurrentPos, p_tank.m_DirectionVal, 0.2f);
+            m_BulletList.Add(bullet);
 
         }
 
