@@ -43,25 +43,100 @@ namespace MTG_TankGame
     {
         public int X;
         public int Y;
+
+        public Vector2(int x, int y)
+        {
+            this.X = x;
+            this.Y = y;
+        }
+
+        public bool Compare(Vector2 p_compare)
+        {
+            if (X == p_compare.X
+                && Y == p_compare.Y)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+
+        //public static bool operator ==(POINT2 lhs, POINT2 rhs)
+        //{
+        //    if (lhs.x == rhs.x
+        //        && lhs.y == rhs.y)
+        //    {
+        //        return true;
+        //    }
+
+        //    return false;
+        //}
+
+
+        //public static Vector2 operator +(Vector2 lhs, Vector2 rhs)
+        //{
+        //    Vector2 outvec = new Vector2();
+        //    return outvec;
+        //}
+
+        public static Vector2 operator ++( Vector2 lhs )
+        {
+            Vector2 outvec = new Vector2();
+            return outvec;
+        }
+
+        //public static Vector2 operator ++()
+        //{
+        //    Vector2 outvec = new Vector2();
+        //    return outvec;
+        //}
+
+        public static bool operator ==(Vector2 lhs, Vector2 rhs)
+        {
+            if (lhs.X == rhs.X
+                && lhs.Y == rhs.Y)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public static bool operator !=(Vector2 lhs, Vector2 rhs)
+        {
+            if (lhs.X == rhs.X
+                && lhs.Y == rhs.Y)
+            {
+                return false;
+            }
+
+            return true;
+
+            //if( lhs == rhs )
+            //{
+            //    return false;
+            //}
+
+            //return true;
+        }
+
+        //struct Wall2
+        //{
+        //    public Wall2(int p_val = 0)
+        //    {
+        //        m_val = 0;
+        //        m_Pos = new Vector2();
+        //    }
+
+        //    public void GetType()
+        //    {
+
+        //    }
+
+        //    public int m_val;
+        //    public Vector2 m_Pos;
     }
-
-    //struct Wall2
-    //{
-    //    public Wall2(int p_val = 0)
-    //    {
-    //        m_val = 0;
-    //        m_Pos = new Vector2();
-    //    }
-
-    //    public void GetType()
-    //    {
-
-    //    }
-
-    //    public int m_val;
-    //    public Vector2 m_Pos;
-    //}
-
 
 
     class Stage
@@ -100,6 +175,41 @@ namespace MTG_TankGame
         string[] m_CurrentStage = null;
 
         Wall2[,] m_TempStageInfo2 = null;
+
+
+        class tempcls
+        {
+
+        }
+
+        public bool ISSame(Vector2 p_pos)
+        {
+            Vector2 temppos = new Vector2(2, 2);
+            if (p_pos == temppos)
+            {
+
+            }
+
+            int tempval = 0;
+            int tempval2 = tempval++;
+            int tempval3 = ++tempval;
+
+
+
+            return false;
+        }
+
+        public bool ISCollision( int p_x, int p_y )
+        {
+
+
+            if(m_CuurentStageInfo[p_y, p_x].WallType == E_WallType.None )
+            {
+                return false;
+            }
+
+            return true;
+        }
 
         public void ResetStage( int p_stageindex )
         {

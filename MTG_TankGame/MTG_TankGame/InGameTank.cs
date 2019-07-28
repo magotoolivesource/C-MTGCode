@@ -19,6 +19,7 @@ namespace MTG_TankGame
 
         protected override void Initialze()
         {
+            
             m_InGameStage = new Stage();
             m_InGameStage.InitStage();
 
@@ -27,19 +28,35 @@ namespace MTG_TankGame
 
             Vector2 pos = new Vector2();
             pos.X = 5;
-            pos.Y = 8;
+            pos.Y = 5;
 
             m_MyTank = new Tank();
-            m_MyTank.InitTankData(pos);
-
-
-            m_EnemyTank = new Tank();
-            pos.Y = 3;
-            m_EnemyTank.InitTankData(pos);
-
-
+            m_MyTank.InitTankData(pos, m_InGameStage );
             m_TankArray[0] = m_MyTank;
-            m_TankArray[1] = m_EnemyTank;
+
+
+            //m_EnemyTank = new Tank();
+            //pos.Y = 3;
+            //m_EnemyTank.InitTankData(pos);
+            //m_TankArray[1] = m_EnemyTank;
+
+
+
+            m_ControlKeyDic.Add(ConsoleKey.UpArrow, E_Driection.Up);
+            m_ControlKeyDic.Add(ConsoleKey.W, E_Driection.Up);
+            m_ControlKeyDic.Add(ConsoleKey.NumPad8, E_Driection.Up);
+
+            m_ControlKeyDic.Add(ConsoleKey.DownArrow, E_Driection.Down);
+            m_ControlKeyDic.Add(ConsoleKey.S, E_Driection.Down);
+
+            m_ControlKeyDic.Add(ConsoleKey.RightArrow, E_Driection.Right);
+            m_ControlKeyDic.Add(ConsoleKey.D, E_Driection.Right);
+
+            m_ControlKeyDic.Add(ConsoleKey.LeftArrow, E_Driection.Left);
+            m_ControlKeyDic.Add(ConsoleKey.A, E_Driection.Left);
+
+
+            E_Driection dic = m_ControlKeyDic[ConsoleKey.UpArrow];
 
         }
 
@@ -58,17 +75,65 @@ namespace MTG_TankGame
                 if(tankcls != null)
                     tankcls.DrawTank(m_Buffer);
             }
+        }
+
+        Dictionary<ConsoleKey, E_Driection> m_ControlKeyDic = new Dictionary<ConsoleKey, E_Driection>();
+
+        void LoopPlayerControl()
+        {
+            ConsoleKey key = m_CurrentKeyInfo.Value.Key;
+
+            if( m_ControlKeyDic.ContainsKey(key) )
+            {
+                //E_Driection val = m_ControlKeyDic[key];
+                m_MyTank.Move( m_ControlKeyDic[key] );
+            }
+
+            if( key == ConsoleKey.Spacebar )
+            {
+                m_MyTank.Fire();
+            }
+
+
+            ////E_Driection movedirection = E_Driection.Max;
+            //if (key == ConsoleKey.UpArrow
+            //    || key == ConsoleKey.W)
+            //{
+            //    m_MyTank.Move(E_Driection.Up);
+            //}
+            //else if (key == ConsoleKey.RightArrow
+            //    || key == ConsoleKey.D)
+            //{
+            //    m_MyTank.Move(E_Driection.Right);
+            //}
+            //else if (key == ConsoleKey.DownArrow
+            //    || key == ConsoleKey.S)
+            //{
+            //    m_MyTank.Move(E_Driection.Down);
+            //}
+            //else if (key == ConsoleKey.LeftArrow
+            //    || key == ConsoleKey.A)
+            //{
+            //    m_MyTank.Move(E_Driection.Left);
+            //}
+
 
         }
 
         protected override void LoopInputFN()
         {
+            m_MyTank.UpdateTank();
+
+
             if (m_CurrentKeyInfo == null)
                 return;
 
+            LoopPlayerControl();
 
-            E_Driection movedirection = E_Driection.Max;
-            m_MyTank.Move(movedirection);
+
+
+
+
 
 
             //foreach (var tankcls in m_TankArray)
