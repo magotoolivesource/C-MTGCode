@@ -16,7 +16,7 @@ namespace MTG_TankGame
 
         int m_CurrentTick = 0;
         int m_NextTick = 0;
-
+        Vector2 m_OffsetPos = new Vector2(0, 0);
         public void InitSetting( Vector2 p_pos
             , E_Driection p_direction
             , float p_movespeed )
@@ -27,6 +27,30 @@ namespace MTG_TankGame
 
             m_CurrentTick = Environment.TickCount;
             m_NextTick = (int)(Speed * 1000f) + m_CurrentTick;
+
+            switch (MoveDirection)
+            {
+                case E_Driection.Right:
+                    m_OffsetPos.X = 1;
+                    break;
+                case E_Driection.Down:
+                    m_OffsetPos.Y = 1;
+                    break;
+                case E_Driection.Left:
+                    m_OffsetPos.X = -1;
+                    break;
+                case E_Driection.Up:
+                    m_OffsetPos.Y = -1;
+                    break;
+                case E_Driection.Max:
+                default:
+                    break;
+            }
+
+            CurrentPos.X = CurrentPos.X + m_OffsetPos.X;
+            CurrentPos.Y = CurrentPos.Y + m_OffsetPos.Y;
+
+            //CurrentPos = CurrentPos + m_OffsetPos;
         }
 
         public void UpdateMove()
@@ -41,14 +65,19 @@ namespace MTG_TankGame
 
             m_NextTick = Environment.TickCount + (int)(Speed * 1000f);
             // 1초에 한번씩 이동
-            CurrentPos.X++;
-            if (CurrentPos.X > 10)
-            {
-                CurrentPos.X = 2;
 
-                //InGameTank.Instance().remove
+            CurrentPos.X = CurrentPos.X + m_OffsetPos.X;
+            CurrentPos.Y = CurrentPos.Y + m_OffsetPos.Y;
 
-            }
+
+            //CurrentPos.X++;
+            //if (CurrentPos.X > 10)
+            //{
+            //    CurrentPos.X = 2;
+
+            //    //InGameTank.Instance().remove
+
+            //}
 
 
         }

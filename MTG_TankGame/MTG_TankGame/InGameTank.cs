@@ -52,7 +52,7 @@ namespace MTG_TankGame
 
         protected override void Initialze()
         {
-            
+
             m_InGameStage = new Stage();
             m_InGameStage.InitStage();
 
@@ -61,17 +61,25 @@ namespace MTG_TankGame
 
             Vector2 pos = new Vector2();
             pos.X = 5;
-            pos.Y = 5;
+            pos.Y = 4;
 
             m_MyTank = new Tank();
             m_MyTank.InitTankData(pos);
             m_TankArray[0] = m_MyTank;
 
 
-            //m_EnemyTank = new Tank();
-            //pos.Y = 3;
-            //m_EnemyTank.InitTankData(pos);
-            //m_TankArray[1] = m_EnemyTank;
+            m_EnemyTank = new Tank();
+            pos.Y = 5;
+            pos.X = 8;
+            m_EnemyTank.InitTankData(pos);
+            m_TankArray[1] = m_EnemyTank;
+
+
+            m_EnemyTank = new Tank();
+            pos.Y = 5;
+            pos.X = 11;
+            m_EnemyTank.InitTankData(pos);
+            m_TankArray[2] = m_EnemyTank;
 
 
 
@@ -97,7 +105,7 @@ namespace MTG_TankGame
         {
             //m_Buffer.Draw('', 2, 3);
 
-            m_InGameStage.DrawStage( m_Buffer );
+            m_InGameStage.DrawStage(m_Buffer);
 
 
             //m_MyTank.DrawTank(m_Buffer);
@@ -105,7 +113,7 @@ namespace MTG_TankGame
 
             foreach (var tankcls in m_TankArray)
             {
-                if(tankcls != null)
+                if (tankcls != null)
                     tankcls.DrawTank(m_Buffer);
             }
 
@@ -122,13 +130,13 @@ namespace MTG_TankGame
         {
             ConsoleKey key = m_CurrentKeyInfo.Value.Key;
 
-            if( m_ControlKeyDic.ContainsKey(key) )
+            if (m_ControlKeyDic.ContainsKey(key))
             {
                 //E_Driection val = m_ControlKeyDic[key];
-                m_MyTank.Move( m_ControlKeyDic[key] );
+                m_MyTank.Move(m_ControlKeyDic[key]);
             }
 
-            if( key == ConsoleKey.Spacebar )
+            if (key == ConsoleKey.Spacebar)
             {
                 m_MyTank.Fire();
             }
@@ -161,9 +169,24 @@ namespace MTG_TankGame
 
         void LoopUpdateBullet()
         {
-            foreach (var bullet in m_BulletList)
+            //foreach (var bullet in m_BulletList)
+            //{
+            //    bullet.UpdateMove();
+            //}
+
+
+            int count = m_BulletList.Count;
+            for (int i = count - 1; i >= 0; i--)
             {
-                bullet.UpdateMove();
+                m_BulletList[i].UpdateMove();
+
+                //m_BulletList.RemoveAll(Predicate);
+                //m_BulletList.RemoveAll( x => m_InGameStage.ISCollision(x.CurrentPos.X, x.CurrentPos.Y) );
+
+                if (m_InGameStage.ISCollision(m_BulletList[i].CurrentPos.X, m_BulletList[i].CurrentPos.Y))
+                {
+                    m_BulletList.RemoveAt(i);
+                }
             }
         }
 
@@ -203,6 +226,47 @@ namespace MTG_TankGame
             Bullet bullet = new Bullet();
             bullet.InitSetting(p_tank.CurrentPos, p_tank.m_DirectionVal, 0.2f);
             m_BulletList.Add(bullet);
+
+        }
+
+
+        public bool Predicate(Bullet obj)
+        {
+            return m_InGameStage.ISCollision(obj.CurrentPos.X, obj.CurrentPos.Y);
+        }
+        void UpdateBullet()
+        {
+
+            int count = m_BulletList.Count;
+            for (int i = count - 1; i >= 0; i--)
+            {
+                //m_BulletList.RemoveAll(Predicate);
+                //m_BulletList.RemoveAll( x => m_InGameStage.ISCollision(x.CurrentPos.X, x.CurrentPos.Y) );
+
+                if(m_InGameStage.ISCollision(m_BulletList[i].CurrentPos.X, m_BulletList[i].CurrentPos.Y))
+                {
+                    m_BulletList.RemoveAt(i);
+                }
+            }
+
+
+
+            //int count = m_BulletList.Count;
+            //for (int i = 0; i < count; i++)
+            //{
+            //    if (m_InGameStage.ISCollision(m_BulletList[i].CurrentPos.X, m_BulletList[i].CurrentPos.Y))
+            //    {
+            //        m_BulletList.RemoveAt(i);
+            //    }
+            //}
+
+            //foreach (Bullet item in m_BulletList)
+            //{
+            //    if (m_InGameStage.ISCollision(item.CurrentPos.X, item.CurrentPos.Y))
+            //    {
+            //        m_BulletList.Remove(item);
+            //    }
+            //}
 
         }
 
