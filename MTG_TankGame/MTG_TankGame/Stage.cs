@@ -80,6 +80,20 @@ namespace MTG_TankGame
         //    return outvec;
         //}
 
+        public static Vector2 operator +(Vector2 lhs, Vector2 rhs)
+        {
+            lhs.X += rhs.X;
+            lhs.Y += rhs.Y;
+            return lhs;
+        }
+        public static Vector2 operator -(Vector2 lhs, Vector2 rhs)
+        {
+            lhs.X -= rhs.X;
+            lhs.Y -= rhs.Y;
+            return lhs;
+        }
+
+        
         public static Vector2 operator ++( Vector2 lhs )
         {
             Vector2 outvec = new Vector2();

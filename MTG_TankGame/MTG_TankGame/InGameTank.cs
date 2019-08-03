@@ -47,8 +47,8 @@ namespace MTG_TankGame
 
         Tank m_MyTank = null;
         Tank m_EnemyTank = null;
-
         Tank[] m_TankArray = null;
+
 
         protected override void Initialze()
         {
@@ -60,25 +60,27 @@ namespace MTG_TankGame
 
 
             Vector2 pos = new Vector2();
+            pos.Y = 5;
             pos.X = 5;
-            pos.Y = 4;
 
             m_MyTank = new Tank();
-            m_MyTank.InitTankData(pos);
+            m_MyTank.InitTankData(pos, E_Driection.Up);
             m_TankArray[0] = m_MyTank;
+
+
 
 
             m_EnemyTank = new Tank();
             pos.Y = 5;
-            pos.X = 8;
-            m_EnemyTank.InitTankData(pos);
+            pos.X = 3;
+            m_EnemyTank.InitTankData(pos, E_Driection.Left, ConsoleColor.Red );
             m_TankArray[1] = m_EnemyTank;
 
 
             m_EnemyTank = new Tank();
             pos.Y = 5;
             pos.X = 11;
-            m_EnemyTank.InitTankData(pos);
+            m_EnemyTank.InitTankData(pos, E_Driection.Right, ConsoleColor.Red);
             m_TankArray[2] = m_EnemyTank;
 
 
@@ -183,8 +185,33 @@ namespace MTG_TankGame
                 //m_BulletList.RemoveAll(Predicate);
                 //m_BulletList.RemoveAll( x => m_InGameStage.ISCollision(x.CurrentPos.X, x.CurrentPos.Y) );
 
+
+                bool iscollision = false;
+                int tankcount = m_TankArray.Length;
+                for (int j = 0; j < tankcount; j++)
+                {
+                    if( m_TankArray[j] != null
+                        && m_TankArray[j].CurrentPos == m_BulletList[i].CurrentPos )
+                    {
+                        iscollision = true;
+                        m_TankArray[j].SetDamage(1);
+
+                        if(m_TankArray[j].HP <= 0)
+                        {
+                            m_TankArray[j] = null;
+                        }
+                    }
+                }
+
+
                 if (m_InGameStage.ISCollision(m_BulletList[i].CurrentPos.X, m_BulletList[i].CurrentPos.Y))
                 {
+                    iscollision = true;
+                }
+
+                if(iscollision)
+                {
+                    // 총알지우기
                     m_BulletList.RemoveAt(i);
                 }
             }

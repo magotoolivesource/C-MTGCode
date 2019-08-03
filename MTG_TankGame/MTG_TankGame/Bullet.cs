@@ -47,10 +47,10 @@ namespace MTG_TankGame
                     break;
             }
 
-            CurrentPos.X = CurrentPos.X + m_OffsetPos.X;
-            CurrentPos.Y = CurrentPos.Y + m_OffsetPos.Y;
+            //CurrentPos.X = CurrentPos.X + m_OffsetPos.X;
+            //CurrentPos.Y = CurrentPos.Y + m_OffsetPos.Y;
 
-            //CurrentPos = CurrentPos + m_OffsetPos;
+            CurrentPos += m_OffsetPos;
         }
 
         public void UpdateMove()
@@ -66,8 +66,10 @@ namespace MTG_TankGame
             m_NextTick = Environment.TickCount + (int)(Speed * 1000f);
             // 1초에 한번씩 이동
 
-            CurrentPos.X = CurrentPos.X + m_OffsetPos.X;
-            CurrentPos.Y = CurrentPos.Y + m_OffsetPos.Y;
+            //CurrentPos.X = CurrentPos.X + m_OffsetPos.X;
+            //CurrentPos.Y = CurrentPos.Y + m_OffsetPos.Y;
+
+            CurrentPos = CurrentPos + m_OffsetPos;
 
 
             //CurrentPos.X++;

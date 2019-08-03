@@ -21,26 +21,43 @@ namespace MTG_TankGame
 
     class Tank
     {
+
+        protected char[] Model = new char[(int)E_Driection.Max]
+        {
+            '>'
+            , 'V'
+            , '<'
+            , '^'
+        };
+
         public Vector2 CurrentPos;
         public int HP = 2;
         Stage m_CurrentStageData = null;
         public E_Driection m_DirectionVal = E_Driection.Max;
         InGameTank m_LinkInGameTank = null;
 
+        ConsoleColor m_Color = ConsoleColor.Red;
+
         public void InitTankData( Vector2 p_initpos
+            , E_Driection p_direction
+            , ConsoleColor p_color = ConsoleColor.Green
             //, Stage p_stagedata
             //, InGameTank p_tankmanager
             )
         {
+            m_DirectionVal = p_direction;
             m_CurrentStageData = InGameTank.Instance().m_InGameStage;// p_stagedata;
             CurrentPos = p_initpos;
             HP = 2;
             m_LinkInGameTank = InGameTank.GetI;
+
+            m_Color = p_color;
         }
 
         public void DrawTank(buffer p_buff )
         {
-            p_buff.Draw("A", CurrentPos.X, CurrentPos.Y);
+            //char model = Model[ (int)m_DirectionVal ];
+            p_buff.Draw(Model[(int)m_DirectionVal], CurrentPos.X, CurrentPos.Y, (short)m_Color);
 
 
         }
@@ -122,7 +139,15 @@ namespace MTG_TankGame
 
         //}
 
+        public void SetDamage(int p_damage)
+        {
+            HP -= p_damage;
+            if( HP <= 0)
+            {
+                // 지워라 
 
+            }
+        }
         
         public void Fire()
         {
