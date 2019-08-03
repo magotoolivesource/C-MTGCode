@@ -52,6 +52,7 @@
     <Compile Include="InGameTank.cs" />
     <Compile Include="Stage.cs" />
     <Compile Include="Tank.cs" />
+    <Compile Include="TestSource.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
