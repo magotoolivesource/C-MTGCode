@@ -10,8 +10,13 @@ namespace MTG_TankGame
     {
         static void Main(string[] args)
         {
-            TestSource test = new TestSource();
-            test.TestData();
+
+            //TestSource2 test = new TestSource2();
+            //test.TestSource();
+
+
+            //TestSource test = new TestSource();
+            //test.TestData();
 
             //InGameTank tankgame = new InGameTank();
             //tankgame.InGameStart();

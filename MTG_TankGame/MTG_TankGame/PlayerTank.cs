@@ -12,9 +12,9 @@ namespace MTG_TankGame
 
     }
 
-    class EnemyTank : Tank
-    {
+    //class EnemyTank : Tank
+    //{
 
-    }
+    //}
 
 }

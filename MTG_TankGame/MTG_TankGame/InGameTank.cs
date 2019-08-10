@@ -66,7 +66,7 @@ namespace MTG_TankGame
             m_MyTank = new Tank();
             m_MyTank.InitTankData(pos, E_Driection.Up);
             m_TankArray[0] = m_MyTank;
-
+            m_MyTank.HP = 1000;
 
 
 
@@ -77,10 +77,30 @@ namespace MTG_TankGame
             m_TankArray[1] = m_EnemyTank;
 
 
-            m_EnemyTank = new Tank();
+
+            //EnemyTank tempenemytank = new EnemyTank();
+            //tempenemytank.InitSettings();
+            m_EnemyTank = new EnemyTank();
             pos.Y = 5;
             pos.X = 11;
             m_EnemyTank.InitTankData(pos, E_Driection.Right, ConsoleColor.Red);
+
+            // (m_EnemyTank as EnemyTank).InitSettings();
+            EnemyTank temptank = (m_EnemyTank as EnemyTank);
+            if( temptank != null )
+            {
+                temptank.InitSettings(m_MyTank);
+                
+            }
+            else
+            {
+                // 에러코드 적용
+
+            }
+
+
+
+
             m_TankArray[2] = m_EnemyTank;
 
 
@@ -169,6 +189,15 @@ namespace MTG_TankGame
 
         }
 
+        void LoopUpdateTanks()
+        {
+            foreach (var tankcls in m_TankArray)
+            {
+                if (tankcls != null)
+                    tankcls.UpdateTank();
+            }
+        }
+
         void LoopUpdateBullet()
         {
             //foreach (var bullet in m_BulletList)
@@ -221,6 +250,7 @@ namespace MTG_TankGame
         {
             //m_MyTank.UpdateTank();
 
+            LoopUpdateTanks();
             LoopUpdateBullet();
 
             if (m_CurrentKeyInfo == null)

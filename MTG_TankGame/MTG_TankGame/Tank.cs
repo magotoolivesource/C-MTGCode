@@ -38,7 +38,7 @@ namespace MTG_TankGame
 
         ConsoleColor m_Color = ConsoleColor.Red;
 
-        public void InitTankData( Vector2 p_initpos
+        public virtual void InitTankData( Vector2 p_initpos
             , E_Driection p_direction
             , ConsoleColor p_color = ConsoleColor.Green
             //, Stage p_stagedata
@@ -62,7 +62,8 @@ namespace MTG_TankGame
 
         }
 
-        public void UpdateTank()
+        // class Tank 
+        public virtual void UpdateTank()
         {
 
         }
