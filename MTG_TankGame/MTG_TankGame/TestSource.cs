@@ -8,6 +8,113 @@ using System.Threading.Tasks;
 
 namespace MTG_TankGame
 {
+
+    public class TestDelegate
+    {
+        
+        delegate int MyDelegate(int p_src, int p_dest);
+        MyDelegate[] tempdelegate = new MyDelegate[10];
+
+        List<MyDelegate> TempDelegateList = new List<MyDelegate>();
+
+
+        int Add(int p_src, int p_dest)
+        {
+            return p_dest + p_src;
+        }
+        int Minus(int p_src, int p_dest)
+        {
+            return p_src - p_dest;
+        }
+        int Multi(int p_src, int p_dest)
+        {
+            return p_dest * p_src;
+        }
+
+        int Div(int p_src, int p_dest)
+        {
+            return (int)((float)p_dest / p_src);
+        }
+
+        int Persent(int p_src, int p_dest)
+        {
+            return (int)(p_dest % p_src);
+        }
+
+
+        public int Comparison(int x, int y)
+        {
+            return 0;
+        }
+
+        public void TestCalc()
+        {
+            //MyDelegate tempdelegate1 = new MyDelegate( Add );
+            //MyDelegate tempdelegate2 = new MyDelegate(Minus);
+
+            //tempdelegate = tempdelegate2;
+            //int testval = tempdelegate(10, 20);
+
+
+            tempdelegate[(int)ConsoleKey.Multiply - (int)ConsoleKey.Multiply] = new MyDelegate(Multi);
+            tempdelegate[(int)ConsoleKey.Add - (int)ConsoleKey.Multiply ] = new MyDelegate(Add);
+            tempdelegate[(int)ConsoleKey.Subtract - (int)ConsoleKey.Multiply] = new MyDelegate(Minus);
+            tempdelegate[(int)ConsoleKey.Divide - (int)ConsoleKey.Multiply] = new MyDelegate(Div);
+            tempdelegate[(int)ConsoleKey.Divide - (int)ConsoleKey.Multiply] = new MyDelegate(Div);
+
+            //TempDelegateList.Add(new MyDelegate(Add));
+
+            ConsoleKeyInfo keyinfo = Console.ReadKey();
+
+            int delegateindex = (int)keyinfo.Key - (int)ConsoleKey.Multiply;
+            if (delegateindex >= 0
+                && delegateindex < tempdelegate.Length )
+            {
+                if( tempdelegate[delegateindex] != null  )
+                {
+                    int val = tempdelegate[delegateindex](10, 20);
+                }
+
+            }
+            
+            //Console.Write("값 : {0}", testval);
+
+
+
+
+            List<int> test = new List<int>();
+            test.Sort( Comparison );
+
+
+
+
+            //int a = 10;
+            //int b = 20;
+
+            //int tempa = b;
+
+
+            //ConsoleKeyInfo keyinfo2 = Console.ReadKey();
+            //if( keyinfo2.Key == ConsoleKey.OemPlus )
+            //{
+            //    Add(a, b);
+            //    //tempa;
+            //}
+            //else if(keyinfo2.Key == ConsoleKey.OemMinus)
+            //{
+            //    Minus(a, b);
+            //    //tempa;
+            //}
+
+
+
+        }
+
+
+    }
+
+
+
     
     //public class TestSource2
     //{

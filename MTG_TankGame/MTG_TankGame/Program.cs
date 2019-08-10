@@ -11,6 +11,9 @@ namespace MTG_TankGame
         static void Main(string[] args)
         {
 
+            //TestDelegate testdelegate = new TestDelegate();
+            //testdelegate.TestCalc();
+
             //TestSource2 test = new TestSource2();
             //test.TestSource();
 

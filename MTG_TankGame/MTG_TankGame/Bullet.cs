@@ -53,6 +53,7 @@ namespace MTG_TankGame
             CurrentPos += m_OffsetPos;
         }
 
+        
         public void UpdateMove()
         {
             //int tick = Environment.TickCount;
