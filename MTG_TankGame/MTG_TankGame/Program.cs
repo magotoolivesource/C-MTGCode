@@ -17,6 +17,25 @@ namespace MTG_TankGame
 
 
 
+            TestStep02Coroutinue step02 = new TestStep02Coroutinue();
+            step02.InitSetting01();
+
+
+            CoroutinueManager manager = CoroutinueManager.GetI;
+
+            while(true)
+            {
+                manager.UpdateCoroutinue();
+
+            }
+
+
+            //while()
+            //{
+
+            //}
+
+
             //TestDelegate testdelegate = new TestDelegate();
             //testdelegate.TestCalc();
 
