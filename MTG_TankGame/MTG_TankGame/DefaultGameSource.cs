@@ -126,6 +126,8 @@ namespace InGameEngine
 
             while (true)
             {
+                //UnityCoroutinue.GetI.LoopUpdateCoroutinue();
+
                 m_CurrentKeyInfo = null;
                 GetInputKey();
                 LoopInputFN();

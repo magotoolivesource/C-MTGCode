@@ -52,11 +52,13 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="InGameTank.cs" />
+    <Compile Include="SingleTon.cs" />
     <Compile Include="Stage.cs" />
     <Compile Include="Tank.cs" />
     <Compile Include="TestCoroutinueStep02.cs" />
     <Compile Include="TestCoroutinue.cs" />
     <Compile Include="TestSource.cs" />
+    <Compile Include="UnityCoroutinue.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

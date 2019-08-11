@@ -135,6 +135,46 @@ namespace MTG_TankGame
 
         }
 
+
+
+        delegate void CallBackFN(int p_count);
+        void WriteCallBackFNTest(int p_count)
+        {
+            Console.WriteLine("WriteCallBackFNTest : {0}", p_count);
+        }
+
+        IEnumerator TestDelaySec(int p_tick, CallBackFN p_callbackfn = null )
+        {
+            int nexttickcount = 0;// Environment.TickCount + p_tick;
+            int count = 0;
+
+            while (true)
+            {
+                yield return null;
+
+                if (Environment.TickCount > nexttickcount)
+                {
+                    if (count > 10)
+                    {
+                        yield break;
+                    }
+
+                    if(p_callbackfn != null)
+                    {
+                        p_callbackfn(count);
+                    }
+                    else
+                    {
+                        WriteData(count);
+                    }
+                    count++;
+                    nexttickcount = Environment.TickCount + p_tick;
+                }
+            }
+
+        }
+
+
         public void InitSetting01()
         {
             CoroutinueManager manager = CoroutinueManager.GetI;
@@ -142,6 +182,12 @@ namespace MTG_TankGame
             manager.StartCoroutinue(TestEnum2());
 
             manager.StartCoroutinue( TestDelaySec(1000) );
+            manager.StartCoroutinue(TestDelaySec(1500, WriteCallBackFNTest) );
+            manager.StartCoroutinue(TestDelaySec(2000, ( p_val ) => {
+                Console.WriteLine("Labmda : {0}", p_val);
+
+                }  
+            ) );
 
         }
 

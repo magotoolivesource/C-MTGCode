@@ -11,9 +11,14 @@ namespace MTG_TankGame
         static void Main(string[] args)
         {
 
-            TestCoroutinue testcoroutinue = new TestCoroutinue();
-            //testcoroutinue.Step02Init();
-            testcoroutinue.Step03Init();
+            //UnityCoroutinue.GetI.StartCoroutinue();
+            //(UnityCoroutinue.GetI as UnityCoroutinue).StartCoroutinue();
+
+
+
+            //TestCoroutinue testcoroutinue = new TestCoroutinue();
+            ////testcoroutinue.Step02Init();
+            //testcoroutinue.Step03Init();
 
 
 
@@ -21,12 +26,21 @@ namespace MTG_TankGame
             step02.InitSetting01();
 
 
+
             CoroutinueManager manager = CoroutinueManager.GetI;
 
-            while(true)
+
+
+            //UnityCoroutinue coroutinuemanager = UnityCoroutinue.GetI;
+
+            Test03_UnityCoroutinue test03 = new Test03_UnityCoroutinue();
+            test03.InitSettingTestCoroutinue();
+
+
+            while (true)
             {
                 manager.UpdateCoroutinue();
-
+                UnityCoroutinue.GetI.LoopUpdateCoroutinue();
             }
 
 
