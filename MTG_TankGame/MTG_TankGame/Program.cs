@@ -11,6 +11,12 @@ namespace MTG_TankGame
         static void Main(string[] args)
         {
 
+            TestCoroutinue testcoroutinue = new TestCoroutinue();
+            //testcoroutinue.Step02Init();
+            testcoroutinue.Step03Init();
+
+
+
             //TestDelegate testdelegate = new TestDelegate();
             //testdelegate.TestCalc();
 

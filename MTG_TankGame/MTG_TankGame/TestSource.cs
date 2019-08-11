@@ -60,12 +60,11 @@ namespace MTG_TankGame
             tempdelegate[(int)ConsoleKey.Add - (int)ConsoleKey.Multiply ] = new MyDelegate(Add);
             tempdelegate[(int)ConsoleKey.Subtract - (int)ConsoleKey.Multiply] = new MyDelegate(Minus);
             tempdelegate[(int)ConsoleKey.Divide - (int)ConsoleKey.Multiply] = new MyDelegate(Div);
-            tempdelegate[(int)ConsoleKey.Divide - (int)ConsoleKey.Multiply] = new MyDelegate(Div);
+            //tempdelegate[(int)ConsoleKey.Divide - (int)ConsoleKey.Multiply] = new MyDelegate(Div);
 
             //TempDelegateList.Add(new MyDelegate(Add));
 
             ConsoleKeyInfo keyinfo = Console.ReadKey();
-
             int delegateindex = (int)keyinfo.Key - (int)ConsoleKey.Multiply;
             if (delegateindex >= 0
                 && delegateindex < tempdelegate.Length )
