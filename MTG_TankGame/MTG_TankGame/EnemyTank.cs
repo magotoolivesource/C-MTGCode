@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,6 +23,19 @@ namespace MTG_TankGame
             m_CurrentTick = Environment.TickCount;
             m_NextTick = (int)(Speed * 1000f) + m_CurrentTick;
 
+
+            // 시간에 흐름에 따라서 호출 하도록 처리
+            InGameEngine.UnityCoroutinue.GetI.StartCoroutinue( UpdateAI() );
+        }
+
+        IEnumerator UpdateAI()
+        {
+            while(true)
+            {
+                UpdateTank();
+                yield return new InGameEngine.UnityCoroutinue.WaitCoroutine(Speed);
+            }
+            
         }
 
         
@@ -31,11 +45,11 @@ namespace MTG_TankGame
 
             base.UpdateTank();
 
-            if (m_NextTick > Environment.TickCount)
-            {
-                return;
-            }
-            m_NextTick = Environment.TickCount + (int)(Speed * 1000f);
+            //if (m_NextTick > Environment.TickCount)
+            //{
+            //    return;
+            //}
+            //m_NextTick = Environment.TickCount + (int)(Speed * 1000f);
 
 
             E_Driection movetype = E_Driection.Max;

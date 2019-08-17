@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MTG_TankGame
+namespace InGameEngine
 {
 
     // 코루틴 참고용 소스

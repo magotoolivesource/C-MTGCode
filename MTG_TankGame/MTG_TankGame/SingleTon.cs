@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MTG_TankGame
+namespace InGameEngine
 {
     // generic, templete
     //class SingleTon <T1, T2> where T1 : class, new() where T2 : struct

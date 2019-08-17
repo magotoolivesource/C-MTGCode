@@ -73,13 +73,19 @@ namespace InGameEngine
             }
         }
 
-        
+
+        protected UnityCoroutinue m_Coroutinue = null;
+
+
         protected virtual void Initialze()
         {
 
         }
         public virtual void Init()
         {
+            m_Coroutinue = UnityCoroutinue.GetI;
+
+
             Console.SetWindowSize(WindowWidth, WindowHeight);
             Console.Title = m_Title;
 
@@ -126,7 +132,7 @@ namespace InGameEngine
 
             while (true)
             {
-                //UnityCoroutinue.GetI.LoopUpdateCoroutinue();
+                m_Coroutinue.LoopUpdateCoroutinue();
 
                 m_CurrentKeyInfo = null;
                 GetInputKey();

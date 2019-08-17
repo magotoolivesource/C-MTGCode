@@ -22,26 +22,32 @@ namespace MTG_TankGame
 
 
 
-            TestStep02Coroutinue step02 = new TestStep02Coroutinue();
-            step02.InitSetting01();
+
+            //// 참고용 소스
+            //TestStep02Coroutinue step02 = new TestStep02Coroutinue();
+            //step02.InitSetting01();
 
 
 
-            CoroutinueManager manager = CoroutinueManager.GetI;
+            //CoroutinueManager manager = CoroutinueManager.GetI;
 
 
 
-            //UnityCoroutinue coroutinuemanager = UnityCoroutinue.GetI;
+            ////UnityCoroutinue coroutinuemanager = UnityCoroutinue.GetI;
 
-            Test03_UnityCoroutinue test03 = new Test03_UnityCoroutinue();
-            test03.InitSettingTestCoroutinue();
+            //Test03_UnityCoroutinue test03 = new Test03_UnityCoroutinue();
+            //test03.InitSettingTestCoroutinue();
 
 
-            while (true)
-            {
-                manager.UpdateCoroutinue();
-                UnityCoroutinue.GetI.LoopUpdateCoroutinue();
-            }
+            //while (true)
+            //{
+            //    manager.UpdateCoroutinue();
+            //    UnityCoroutinue.GetI.LoopUpdateCoroutinue();
+            //}
+            //// 참고용 소스
+
+
+
 
 
             //while()

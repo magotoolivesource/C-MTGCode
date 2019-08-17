@@ -249,8 +249,9 @@ namespace MTG_TankGame
         protected override void LoopInputFN()
         {
             //m_MyTank.UpdateTank();
+            //LoopUpdateTanks();
 
-            LoopUpdateTanks();
+
             LoopUpdateBullet();
 
             if (m_CurrentKeyInfo == null)
