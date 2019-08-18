@@ -15,39 +15,60 @@ using System.Net;
 
 namespace ChatServer
 {
-    public partial class Form1 : Form
+    public partial class Form1 : Form, testInterface
     {
+
+
 
         Socket m_ServerSocket = null;
 
 
+        
         public void ServerAcceptAsyncCallback(IAsyncResult ar)
         {
+            //throw new Exception("가나다");
 
+
+
+        }
+
+
+        public void TestFN()
+        {
+            if(true)
+            {
+                throw new NotImplementedException("가나다");
+            }
+            
+            //throw new Exception("가나다");
+
+            Debug.WriteLine("ABCDEFG");
         }
 
         void StartServer()
         {
             m_ServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp );
 
+            //Convert.ToInt32();
+            //atoi()
+
             // 문자를 숫자로 바꾸기 함수 C++ 함수 찾기
             IPAddress ipaddress = IPAddress.Parse(IPText.Text);
-            IPEndPoint endpoint = new IPEndPoint(ipaddress, 25000 );
+            IPEndPoint endpoint = new IPEndPoint(ipaddress, int.Parse( PortText.Text ) );
 
             try
             {
                 m_ServerSocket.Bind(endpoint);
-                m_ServerSocket.Listen(10);
                 m_ServerSocket.BeginAccept(new AsyncCallback(ServerAcceptAsyncCallback), null);
+                m_ServerSocket.Listen(10);
             }
-            catch (Exception e)
+            catch ( Exception e )
             {
-                Debug.WriteLine("서버 에러 : {0} ", e.Message);
+                string msg = string.Format("예외생김 : {0}", e.Message);
+                //Debug.WriteLine(msg);
+                MessageBox.Show(msg, "Error", MessageBoxButtons.OK);
             }
-
-
-
-
+            
         }
 
 
@@ -100,5 +121,7 @@ namespace ChatServer
         {
             StartServer();
         }
+
+        
     }
 }
