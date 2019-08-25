@@ -24,6 +24,35 @@ namespace ChatClient
 
         }
 
+        protected void SendMessage(string p_userid, string p_msg)
+        {
+            // 데이터 방식 01
+            //string sendmsg = string.Format("{0} : {1}", p_userid, p_msg);
+            //byte[] senddata = Encoding.UTF8.GetBytes(sendmsg);
+
+            //// 데이터보내기
+            //m_Connect.BeginSend(senddata, 0, senddata.Length, SocketFlags.None, new AsyncCallback(OnSend), null);
+
+
+            // 데이터 방식 02
+            List<byte> senddatalist = new List<byte>();
+            byte[] userid = Encoding.UTF8.GetBytes(p_userid);
+            Int32 size = userid.Length;
+            byte[] idsize = BitConverter.GetBytes(size);
+            senddatalist.AddRange(idsize);
+
+            byte[] msgbyte = Encoding.UTF8.GetBytes(p_msg);
+            Int32 msgsize = msgbyte.Length;
+            byte[] msgsizebyte = BitConverter.GetBytes(msgsize);
+            senddatalist.AddRange(msgsizebyte );
+
+            senddatalist.AddRange(userid);
+            senddatalist.AddRange(msgbyte);
+
+            m_Connect.BeginSend(senddatalist.ToArray(), 0, senddatalist.Count, SocketFlags.None, new AsyncCallback(OnSend), null);
+
+        }
+
         public void OnConnect(IAsyncResult ar)
         {
             //m_Connect.EndConnect(ar);
@@ -35,12 +64,15 @@ namespace ChatClient
             // 연결 된것 확인
             m_Connect.EndConnect(ar);
             
+            // 내용 보내기
             //byte[] senddata = new byte[1024];
-            string userid = textBox2.Text;
-            byte[] senddata = Encoding.UTF8.GetBytes(userid);
+            //string userid = textBox2.Text;
+            //byte[] senddata = Encoding.UTF8.GetBytes(userid);
+            //// 데이터보내기
+            //m_Connect.BeginSend(senddata, 0, senddata.Length, SocketFlags.None, new AsyncCallback(OnSend), null );
+            SendMessage(textBox2.Text, "");
+            // 내용 보내기
 
-            // 데이터보내기
-            m_Connect.BeginSend(senddata, 0, senddata.Length, SocketFlags.None, new AsyncCallback(OnSend), null );
 
 
             // 데이터 받기 처리
@@ -74,6 +106,15 @@ namespace ChatClient
         private void Button2_Click(object sender, EventArgs e)
         {
             ConnectServer();
+
+        }
+
+        private void Button1_Click(object sender, EventArgs e)
+        {
+            string userid = textBox2.Text;
+            string sendmessage = InputTextBox.Text;
+            SendMessage(textBox2.Text, InputTextBox.Text);
+            InputTextBox.Text = "";
 
         }
     }

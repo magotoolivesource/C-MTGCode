@@ -80,8 +80,9 @@
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(118, 21);
             this.button1.TabIndex = 7;
-            this.button1.Text = "클릭01";
+            this.button1.Text = "내용보내기";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.Button1_Click);
             // 
             // InputTextBox
             // 

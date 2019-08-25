@@ -15,9 +15,10 @@ using System.Net;
 
 namespace ChatServer
 {
+
+    //[System.Serializable]
     public partial class Form1 : Form, testInterface
     {
-
         Socket m_ServerSocket = null;
         private byte[] m_ResiveBuffer = new byte[1024];
 
@@ -29,12 +30,27 @@ namespace ChatServer
             clientsocket.EndReceive(ar);
 
 
-            // 클라이언트에서 날아온 데이터 파싱하기
-            string userstring = Encoding.UTF8.GetString(m_ResiveBuffer);
-            string temstr = string.Format("접속 하였습니다. UserID : {0}\r\n", userstring);
+            //// 데이터 방식 01
+            //// 클라이언트에서 날아온 데이터 파싱하기
+            //string userstring = Encoding.UTF8.GetString(m_ResiveBuffer);
+            //string temstr = string.Format("{0}\r\n", userstring);
+            //textBox1.AppendText(temstr);
+
+
+            // 데이터 방식 02
+            int useridsize = BitConverter.ToInt32(m_ResiveBuffer, 0); // userid 사이즈
+            int msgsize = BitConverter.ToInt32(m_ResiveBuffer, 4);
+
+            string userstr = Encoding.UTF8.GetString(m_ResiveBuffer, 8, useridsize);
+            string msgstr = Encoding.UTF8.GetString(m_ResiveBuffer, 8 + useridsize, msgsize);
+
+            string temstr = string.Format("{0} : {1}\r\n", userstr, msgstr);
             textBox1.AppendText(temstr);
 
 
+
+
+            m_ResiveBuffer = new byte[1024];
             // 클라이언트 데이터 연결 대기
             clientsocket.BeginReceive(m_ResiveBuffer, 0, m_ResiveBuffer.Length, SocketFlags.None
                 , new AsyncCallback(ReceiveAsyncCallback)
@@ -81,7 +97,8 @@ namespace ChatServer
             //    new AsyncCallback(OnReceive), clientSocket
             //    );
 
-            textBox1.AppendText(" 접속했습니다.\r\n");
+            string tempstr = string.Format(" {0} 접속했습니다.\r\n", clientsocket.RemoteEndPoint.ToString());
+            textBox1.AppendText(tempstr);
 
             //throw new Exception("가나다");
             //m_ServerSocket.BeginReceive();
