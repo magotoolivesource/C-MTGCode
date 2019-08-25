@@ -19,11 +19,34 @@ namespace ChatClient
             InitializeComponent();
         }
 
+        public void OnSend(IAsyncResult ar)
+        {
+
+        }
+
         public void OnConnect(IAsyncResult ar)
         {
             //m_Connect.EndConnect(ar);
 
             MessageBox.Show("접속 성공", "확인", MessageBoxButtons.OK);
+
+
+            // 서버 접속 이후 처리할부분
+            // 연결 된것 확인
+            m_Connect.EndConnect(ar);
+            
+            //byte[] senddata = new byte[1024];
+            string userid = textBox2.Text;
+            byte[] senddata = Encoding.UTF8.GetBytes(userid);
+
+            // 데이터보내기
+            m_Connect.BeginSend(senddata, 0, senddata.Length, SocketFlags.None, new AsyncCallback(OnSend), null );
+
+
+            // 데이터 받기 처리
+            //m_Connect.BeginReceive();
+
+
         }
 
         Socket m_Connect = null;

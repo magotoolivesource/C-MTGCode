@@ -18,18 +18,73 @@ namespace ChatServer
     public partial class Form1 : Form, testInterface
     {
 
-
-
         Socket m_ServerSocket = null;
+        private byte[] m_ResiveBuffer = new byte[1024];
+
+
+        public void ReceiveAsyncCallback(IAsyncResult ar)
+        {
+            // 클라이언트에서 보내는 데이터 받기 위한 함수
+            Socket clientsocket = (Socket)ar.AsyncState;
+            clientsocket.EndReceive(ar);
+
+
+            // 클라이언트에서 날아온 데이터 파싱하기
+            string userstring = Encoding.UTF8.GetString(m_ResiveBuffer);
+            string temstr = string.Format("접속 하였습니다. UserID : {0}\r\n", userstring);
+            textBox1.AppendText(temstr);
+
+
+            // 클라이언트 데이터 연결 대기
+            clientsocket.BeginReceive(m_ResiveBuffer, 0, m_ResiveBuffer.Length, SocketFlags.None
+                , new AsyncCallback(ReceiveAsyncCallback)
+                , clientsocket );
+        }
 
 
         
+
         public void ServerAcceptAsyncCallback(IAsyncResult ar)
         {
+            //m_ServerSocket.Receive();
+            //m_ServerSocket.Connect();
+            //m_ServerSocket.Accept();
+            //m_ServerSocket.Send();
+            //m_ServerSocket.Close();
+
+
+            // 다른 클라이언트 연결 대기
+            m_ServerSocket.BeginAccept(new AsyncCallback(ServerAcceptAsyncCallback), null);
+
+
+
+            // 클라이언트와 데이터 통신위한 처리
+            Socket clientsocket = m_ServerSocket.EndAccept(ar);
+            // byte[] buffer, int offset, int size, SocketFlags socketFlags, AsyncCallback callback
+            // , object state
+            
+            clientsocket.BeginReceive(m_ResiveBuffer
+                , 0
+                , m_ResiveBuffer.Length
+                , SocketFlags.None
+                , new AsyncCallback(ReceiveAsyncCallback)
+                , clientsocket);
+
+
+            //// 클라이언트 데이터
+            //Socket clientSocket = m_listen_socket.EndAccept(p_ar);
+
+            //// 소켓 연결된 유저를 리시브에서 받을수 있도록 처리
+            //clientSocket.BeginReceive(byteData, 0,
+            //    byteData.Length, SocketFlags.None,
+            //    //new AsyncCallback( (ar) => { OnReceive(ar); } ), clientSocket
+            //    new AsyncCallback(OnReceive), clientSocket
+            //    );
+
+            textBox1.AppendText(" 접속했습니다.\r\n");
+
             //throw new Exception("가나다");
-            textBox1.AppendText( "접속했습니다.\r\n"  );
-
-
+            //m_ServerSocket.BeginReceive();
         }
 
 
@@ -68,10 +123,17 @@ namespace ChatServer
             //Convert.ToInt32();
             //atoi()
 
-            // 문자를 숫자로 바꾸기 함수 C++ 함수 찾기
-            IPAddress ipaddress = IPAddress.Parse(IPText.Text);
+            IPAddress ipaddress = null;
+            if (IPText.Text == "0.0.0.0")
+            {
+                // 문자를 숫자로 바꾸기 함수 C++ 함수 찾기
+                ipaddress = IPAddress.Parse(IPText.Text);
+            }
+            else
+            {
+                ipaddress = IPAddress.Any;
+            }
 
-            ipaddress = IPAddress.Any;
 
             IPEndPoint endpoint = new IPEndPoint(ipaddress, int.Parse( PortText.Text ) );
 
@@ -96,6 +158,7 @@ namespace ChatServer
 
         public Form1()
         {
+            this.Text = "서버창";
             // https://westwoodforever.blogspot.com/2012/08/xxx.html
             // 폼에서 사용하는 컨트롤을 다른곳에서 사용할때 디버그 모드에서 에러가 생긴다
             // 쓰레드 에러를 없애기 위한 값
