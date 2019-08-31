@@ -23,6 +23,7 @@ namespace ChatServer
         private byte[] m_ResiveBuffer = new byte[1024];
 
 
+
         public void ReceiveAsyncCallback(IAsyncResult ar)
         {
             // 클라이언트에서 보내는 데이터 받기 위한 함수
@@ -38,15 +39,26 @@ namespace ChatServer
 
 
             // 데이터 방식 02
-            int useridsize = BitConverter.ToInt32(m_ResiveBuffer, 0); // userid 사이즈
-            int msgsize = BitConverter.ToInt32(m_ResiveBuffer, 4);
+            //int useridsize = BitConverter.ToInt32(m_ResiveBuffer, 0); // userid 사이즈
+            //int msgsize = BitConverter.ToInt32(m_ResiveBuffer, 4);
 
-            string userstr = Encoding.UTF8.GetString(m_ResiveBuffer, 8, useridsize);
-            string msgstr = Encoding.UTF8.GetString(m_ResiveBuffer, 8 + useridsize, msgsize);
+            //string userstr = Encoding.UTF8.GetString(m_ResiveBuffer, 8, useridsize);
+            //string msgstr = Encoding.UTF8.GetString(m_ResiveBuffer, 8 + useridsize, msgsize);
 
-            string temstr = string.Format("{0} : {1}\r\n", userstr, msgstr);
-            textBox1.AppendText(temstr);
+            //string temstr = string.Format("{0} : {1}\r\n", userstr, msgstr);
+            //textBox1.AppendText(temstr);
 
+
+            // 데이터 방식 03
+            SocketDataCls resivedata = SocketDataCls.GetDeserialize(m_ResiveBuffer);
+            textBox1.AppendText( resivedata.ToChatMsg() + "\r\n");
+
+
+
+
+            //SocketDataCls datacls = new SocketDataCls();
+            //datacls.Name = userstr;
+            //datacls.Message = msgstr;
 
 
 
@@ -172,9 +184,19 @@ namespace ChatServer
         }
 
 
+        void TestFN2(out string p_val)
+        {
+            p_val = "testabc";
+        }
 
         public Form1()
         {
+            string tempstr = "abc";
+            TestFN2(out tempstr);
+            Console.WriteLine(tempstr);
+
+
+
             this.Text = "서버창";
             // https://westwoodforever.blogspot.com/2012/08/xxx.html
             // 폼에서 사용하는 컨트롤을 다른곳에서 사용할때 디버그 모드에서 에러가 생긴다

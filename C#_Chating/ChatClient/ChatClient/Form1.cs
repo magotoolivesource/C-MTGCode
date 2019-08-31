@@ -9,6 +9,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ChatServer;
 
 namespace ChatClient
 {
@@ -35,21 +36,34 @@ namespace ChatClient
 
 
             // 데이터 방식 02
+            //List<byte> senddatalist = new List<byte>();
+            //byte[] userid = Encoding.UTF8.GetBytes(p_userid);
+            //Int32 size = userid.Length;
+            //byte[] idsize = BitConverter.GetBytes(size);
+            //senddatalist.AddRange(idsize);
+
+            //byte[] msgbyte = Encoding.UTF8.GetBytes(p_msg);
+            //Int32 msgsize = msgbyte.Length;
+            //byte[] msgsizebyte = BitConverter.GetBytes(msgsize);
+            //senddatalist.AddRange(msgsizebyte );
+
+            //senddatalist.AddRange(userid);
+            //senddatalist.AddRange(msgbyte);
+
+
+            // 데이터 방식 3
+            SocketDataCls senddata = new SocketDataCls();
+            senddata.Name = p_userid;
+            senddata.Message = p_msg;
             List<byte> senddatalist = new List<byte>();
-            byte[] userid = Encoding.UTF8.GetBytes(p_userid);
-            Int32 size = userid.Length;
-            byte[] idsize = BitConverter.GetBytes(size);
-            senddatalist.AddRange(idsize);
+            senddatalist.AddRange( senddata.GetByteData() );
 
-            byte[] msgbyte = Encoding.UTF8.GetBytes(p_msg);
-            Int32 msgsize = msgbyte.Length;
-            byte[] msgsizebyte = BitConverter.GetBytes(msgsize);
-            senddatalist.AddRange(msgsizebyte );
-
-            senddatalist.AddRange(userid);
-            senddatalist.AddRange(msgbyte);
-
-            m_Connect.BeginSend(senddatalist.ToArray(), 0, senddatalist.Count, SocketFlags.None, new AsyncCallback(OnSend), null);
+            m_Connect.BeginSend(senddatalist.ToArray()
+                , 0
+                , senddatalist.Count
+                , SocketFlags.None
+                , new AsyncCallback(OnSend)
+                , null);
 
         }
 
